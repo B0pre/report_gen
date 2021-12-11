@@ -1,0 +1,35 @@
+docname: sample document
+sheets:
+  - id: report_0
+    name: report number 0
+    chunks:
+      - type: table
+        source: source_01
+        id: table1
+        title: table1 for report 0
+        cols:
+          - id: id
+            title: identifier
+          - id: name
+            title: username
+      - type: separator
+        strength: 2
+      - type: table
+        source: source_01
+        id: table2
+        title: table1 for report 0
+        cols:
+          - id: id
+            title: identifier
+          - id: name
+            title: username
+sources:
+    - type: static
+      id: source_01
+      lines:
+        - id: 01
+          name: user_01
+        - id: 02
+          name: user_02
+        - id: 03
+          name: user_03
