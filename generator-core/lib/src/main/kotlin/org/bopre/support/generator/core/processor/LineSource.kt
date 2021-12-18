@@ -1,10 +1,11 @@
 package org.bopre.support.generator.core.processor
 
-interface LineSource : Iterable<Line> {
+interface LineSource {
     companion object {
         fun static(values: Collection<Line>): LineSource = object : LineSource {
-            override fun iterator(): Iterator<Line> =
-                values.iterator()
+            override fun start(): Iterable<Line> = values
         }
     }
+
+    fun start(): Iterable<Line>
 }

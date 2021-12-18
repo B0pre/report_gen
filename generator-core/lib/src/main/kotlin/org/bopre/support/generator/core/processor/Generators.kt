@@ -56,7 +56,7 @@ class Generators {
                             throw RuntimeException("no source found: $sourceId")
 
                         //render body
-                        for (line in lineSource) {
+                        for (line in lineSource.start()) {
                             val bodyRow = sheetPOI.createRow(currentRowNum++)
                             var bodyColumnNum = 0
                             for (column in chunk.cols) {

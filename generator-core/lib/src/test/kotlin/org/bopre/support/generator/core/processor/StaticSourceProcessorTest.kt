@@ -26,7 +26,7 @@ class StaticSourceProcessorTest {
         val expectedLines = 2;
         var actualLines = 0;
 
-        for (line: Line in source) {
+        for (line: Line in source.start()) {
             val value = line.getCell("col${actualLines}0")
             assertEquals("val${actualLines}0", value, "wrong value for line $actualLines")
             actualLines += 1;
