@@ -1,4 +1,4 @@
-package org.bopre.support.generator.core.processor
+package org.bopre.support.generator.core.processor.data
 
 interface LineSource {
     companion object {

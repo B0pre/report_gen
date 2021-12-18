@@ -2,6 +2,7 @@ package org.bopre.support.generator.core.processor
 
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.bopre.support.generator.core.processor.render.Generators
 import org.junit.Test
 import java.io.File
 import java.io.FileInputStream
@@ -16,7 +17,7 @@ class GeneratorTest {
         val generator = Generators.fromYaml(fileYaml)
         val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
 
-        generator.generateToFile(
+        generator.renderToFile(
             file
         )
 

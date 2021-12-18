@@ -9,8 +9,8 @@ class PoiDocumentRenderer(
     val sheets: List<Sheet>,
     val handlers: List<ContentHandler>,
     val settings: DocumentSettings
-) {
-    fun renderToFile(file: File) {
+) : Generator() {
+    override fun renderToFile(file: File) {
         val workBook = renderWorkBook()
 
         //write work book content to file

@@ -1,6 +1,6 @@
 package org.bopre.support.generator.core.processor.render
 
-import org.bopre.support.generator.core.processor.LineSource
+import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.content.Sheet
 import java.util.*
 

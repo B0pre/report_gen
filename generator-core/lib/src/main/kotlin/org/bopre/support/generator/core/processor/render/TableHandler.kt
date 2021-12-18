@@ -1,7 +1,7 @@
 package org.bopre.support.generator.core.processor.render
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.bopre.support.generator.core.processor.LineSource
+import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.TableContent
 
