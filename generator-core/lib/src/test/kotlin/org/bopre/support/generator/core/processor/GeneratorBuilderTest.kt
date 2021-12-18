@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.bopre.support.generator.core.processor.content.*
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
+import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
 import java.io.File
@@ -48,7 +49,7 @@ class GeneratorBuilderTest {
             .externalSource(sourceId, someSource)
             .build()
 
-        renderer.renderToFile(file)
+        renderer.renderToFile(file, RenderProperties.empty())
 
         assertTrue(file.exists(), "file was not created")
         assertSheetInFile(
