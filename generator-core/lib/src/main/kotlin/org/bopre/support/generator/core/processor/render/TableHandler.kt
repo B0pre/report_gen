@@ -32,8 +32,7 @@ class TableHandler : ContentHandler {
             var bodyColumnNum = 0
             for (column in content.columns) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
-                val cellId = column.getColumnId() ?: "$bodyColumnNum"
-                cell.setCellValue(line.getCell(cellId))
+                cell.setCellValue(column.getValue(line))
             }
         }
         return currentRowNum
