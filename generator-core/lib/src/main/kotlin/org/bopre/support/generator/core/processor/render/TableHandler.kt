@@ -4,17 +4,18 @@ import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.TableContent
 import org.bopre.support.generator.core.processor.data.LineSource
-import org.bopre.support.generator.core.processor.data.RenderProperties
 
 class TableHandler : ContentHandler {
     override fun handleContent(
         sheet: XSSFSheet,
-        rowStart: Int,
         content: Content,
-        settings: DocumentSettings,
-        properties: RenderProperties
+        context: RenderContext
     ): Int {
-        if (content !is TableContent) return rowStart
+        if (content !is TableContent) return context.currentRow()
+        val rowStart = context.currentRow()
+        val settings = context.getSettings()
+        val properties = context.getProperties()
+
         var currentRowNum = rowStart
         //render header
         val header = sheet.createRow(currentRowNum++)

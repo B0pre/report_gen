@@ -24,11 +24,12 @@ class PoiDocumentRenderer(
         val workBook = XSSFWorkbook()
         for (sheet in sheets) {
             val sheetPOI = workBook.createSheet(sheet.title)
-            var currentRowNum = 0;
+            var context = RenderContext.init(settings = settings, properties = properties)
             for (content in sheet.contents) {
                 for (handler in handlers) {
                     if (!handler.supports(content)) continue
-                    currentRowNum = handler.handleContent(sheetPOI, currentRowNum, content, settings, properties)
+                    val rowShift = handler.handleContent(sheetPOI, content, context)
+                    context = RenderContext.shiftRow(context, rowShift)
                     break
                 }
             }
