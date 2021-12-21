@@ -3,10 +3,7 @@ package org.bopre.support.generator.core.processor
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.bopre.support.generator.core.processor.content.*
-import org.bopre.support.generator.core.processor.content.impl.SeparatorContent
-import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
-import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
-import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.impl.*
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
@@ -42,7 +39,7 @@ class GeneratorBuilderTest {
         val linesToSkip = 2
         val contentsForSheet0: List<Content> = listOf(
             SimpleTableContent(columns, sourceId),
-            SeparatorContent(linesToSkip),
+            SimpleSeparatorContent(linesToSkip),
             SimpleTableContent(columns, sourceId)
         )
 

@@ -2,7 +2,7 @@ package org.bopre.support.generator.core.processor.render.handlers
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.bopre.support.generator.core.processor.content.Content
-import org.bopre.support.generator.core.processor.content.impl.SeparatorContent
+import org.bopre.support.generator.core.processor.content.SeparatorContent
 import org.bopre.support.generator.core.processor.render.RenderContext
 
 class SeparatorHandler : ContentHandler {
@@ -15,7 +15,7 @@ class SeparatorHandler : ContentHandler {
 
         var currentRowNum = rowStart
         if (content is SeparatorContent) {
-            for (i: Int in 1..content.linesToSkip) {
+            for (i: Int in 1..content.getLinesToSkip()) {
                 val row = sheet.createRow(currentRowNum++)
                 val cell = row.createCell(0)
                 cell.setCellValue("")
