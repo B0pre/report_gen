@@ -1,7 +1,8 @@
-package org.bopre.support.generator.core.processor.render
+package org.bopre.support.generator.core.processor.render.handlers
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.bopre.support.generator.core.processor.content.Content
+import org.bopre.support.generator.core.processor.render.RenderContext
 
 interface ContentHandler {
     fun handleContent(

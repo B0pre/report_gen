@@ -2,6 +2,9 @@ package org.bopre.support.generator.core.processor.render
 
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.content.Sheet
+import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
+import org.bopre.support.generator.core.processor.render.handlers.SeparatorHandler
+import org.bopre.support.generator.core.processor.render.handlers.TableHandler
 import java.util.*
 
 class PoiDocumentRendererBuilder(

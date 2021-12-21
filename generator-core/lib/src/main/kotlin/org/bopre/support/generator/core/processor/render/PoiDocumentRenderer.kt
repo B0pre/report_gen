@@ -3,6 +3,7 @@ package org.bopre.support.generator.core.processor.render
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Sheet
 import org.bopre.support.generator.core.processor.data.RenderProperties
+import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
 import java.io.File
 import java.io.FileOutputStream
 
