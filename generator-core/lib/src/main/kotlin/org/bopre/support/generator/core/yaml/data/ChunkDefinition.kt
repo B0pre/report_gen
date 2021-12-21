@@ -3,6 +3,9 @@ package org.bopre.support.generator.core.yaml.data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bopre.support.generator.core.processor.content.*
+import org.bopre.support.generator.core.processor.content.impl.SeparatorContent
+import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
+import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
 
 @Serializable
 sealed class ChunkDefinition {

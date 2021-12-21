@@ -2,7 +2,7 @@ package org.bopre.support.generator.core.processor.render
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.bopre.support.generator.core.processor.content.Content
-import org.bopre.support.generator.core.processor.content.SeparatorContent
+import org.bopre.support.generator.core.processor.content.impl.SeparatorContent
 
 class SeparatorHandler : ContentHandler {
     override fun handleContent(

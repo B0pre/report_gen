@@ -2,7 +2,7 @@ package org.bopre.support.generator.core.processor.render
 
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
-import org.bopre.support.generator.core.processor.content.SimpleSheet
+import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
 import org.bopre.support.generator.core.yaml.YamlConfigurationReaderImpl
 import org.bopre.support.generator.core.yaml.data.SourceDefinition
 import java.io.File

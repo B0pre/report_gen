@@ -1,5 +1,6 @@
-package org.bopre.support.generator.core.processor.content
+package org.bopre.support.generator.core.processor.content.impl
 
+import org.bopre.support.generator.core.processor.content.TableColumn
 import org.bopre.support.generator.core.processor.data.Line
 
 class SimpleTableColumn(
