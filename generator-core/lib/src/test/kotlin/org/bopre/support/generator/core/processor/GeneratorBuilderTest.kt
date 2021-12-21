@@ -37,9 +37,9 @@ class GeneratorBuilderTest {
 
         val linesToSkip = 2
         val contentsForSheet0: List<Content> = listOf(
-            TableContent(columns, sourceId),
+            SimpleTableContent(columns, sourceId),
             SeparatorContent(linesToSkip),
-            TableContent(columns, sourceId)
+            SimpleTableContent(columns, sourceId)
         )
 
         val sheet0 = Sheet("sheet0", contentsForSheet0)

@@ -15,7 +15,7 @@ sealed class ChunkDefinition {
         val cols: List<CellParameters> = emptyList()
     ) : ChunkDefinition() {
         override fun toContent(): Content =
-            TableContent(
+            SimpleTableContent(
                 sourceId = source,
                 columns = cols
                     .mapIndexed { index, cellParameters -> toColumn(cellParameters, index) }

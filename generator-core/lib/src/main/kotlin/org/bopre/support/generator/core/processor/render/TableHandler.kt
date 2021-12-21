@@ -20,18 +20,18 @@ class TableHandler : ContentHandler {
         //render header
         val header = sheet.createRow(currentRowNum++)
         var columnNum = 0
-        for (column in content.columns) {
+        for (column in content.getColumns()) {
             val cell = header.createCell(columnNum++)
             cell.setCellValue(column.getTitle())
         }
-        val sourceId = content.sourceId
+        val sourceId = content.getSourceId()
         var lineSource: LineSource = settings.getSource(sourceId)
 
         //render body
         for (line in lineSource.start(properties)) {
             val bodyRow = sheet.createRow(currentRowNum++)
             var bodyColumnNum = 0
-            for (column in content.columns) {
+            for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
                 cell.setCellValue(column.getValue(line))
             }

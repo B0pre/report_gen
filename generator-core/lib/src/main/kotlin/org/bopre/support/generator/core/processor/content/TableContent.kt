@@ -1,3 +1,7 @@
 package org.bopre.support.generator.core.processor.content
 
-class TableContent(val columns: List<TableColumn>, val sourceId: String) : Content()
+interface TableContent : Content {
+
+    fun getColumns(): List<TableColumn>
+    fun getSourceId(): String
+}
