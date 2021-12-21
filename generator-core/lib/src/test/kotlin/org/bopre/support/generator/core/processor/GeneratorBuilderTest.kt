@@ -42,7 +42,7 @@ class GeneratorBuilderTest {
             SimpleTableContent(columns, sourceId)
         )
 
-        val sheet0 = Sheet("sheet0", contentsForSheet0)
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
 
         val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
             .appendSheet(sheet0)

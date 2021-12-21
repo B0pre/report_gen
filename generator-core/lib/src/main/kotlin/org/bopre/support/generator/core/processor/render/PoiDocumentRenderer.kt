@@ -23,9 +23,9 @@ class PoiDocumentRenderer(
     private fun renderWorkBook(properties: RenderProperties): XSSFWorkbook {
         val workBook = XSSFWorkbook()
         for (sheet in sheets) {
-            val sheetPOI = workBook.createSheet(sheet.title)
+            val sheetPOI = workBook.createSheet(sheet.getTitle())
             var context = RenderContext.init(settings = settings, properties = properties)
-            for (content in sheet.contents) {
+            for (content in sheet.getContents()) {
                 for (handler in handlers) {
                     if (!handler.supports(content)) continue
                     val rowShift = handler.handleContent(sheetPOI, content, context)
