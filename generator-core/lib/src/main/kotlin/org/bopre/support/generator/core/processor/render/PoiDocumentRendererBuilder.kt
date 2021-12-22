@@ -2,6 +2,7 @@ package org.bopre.support.generator.core.processor.render
 
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.content.Sheet
+import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
 import org.bopre.support.generator.core.processor.render.handlers.SeparatorHandler
 import org.bopre.support.generator.core.processor.render.handlers.TableHandler
@@ -24,7 +25,7 @@ class PoiDocumentRendererBuilder(
         return this
     }
 
-    fun build(): PoiDocumentRenderer {
+    fun build(renderProperties: RenderProperties): PoiDocumentRenderer {
         val sheets = LinkedList(registeredSheets)
         val handlers = LinkedList(registeredContentHandlers)
         val settings = createSettings()
@@ -32,7 +33,8 @@ class PoiDocumentRendererBuilder(
         return PoiDocumentRenderer(
             sheets = sheets,
             handlers = handlers,
-            settings = settings
+            settings = settings,
+            properties = renderProperties
         )
     }
 

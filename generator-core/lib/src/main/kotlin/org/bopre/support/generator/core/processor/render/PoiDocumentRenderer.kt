@@ -10,10 +10,11 @@ import java.io.FileOutputStream
 class PoiDocumentRenderer(
     val sheets: List<Sheet>,
     val handlers: List<ContentHandler>,
-    val settings: DocumentSettings
+    val settings: DocumentSettings,
+    private val properties: RenderProperties = RenderProperties.empty()
 ) : Generator() {
-    override fun renderToFile(file: File, properties: RenderProperties) {
-        val workBook = renderWorkBook(properties)
+    override fun renderToFile(file: File) {
+        val workBook = renderWorkBook()
 
         //write work book content to file
         val fileOutputStream = FileOutputStream(file)
@@ -21,7 +22,7 @@ class PoiDocumentRenderer(
         fileOutputStream.close()
     }
 
-    private fun renderWorkBook(properties: RenderProperties): XSSFWorkbook {
+    private fun renderWorkBook(): XSSFWorkbook {
         val workBook = XSSFWorkbook()
         for (sheet in sheets) {
             val sheetPOI = workBook.createSheet(sheet.getTitle())

@@ -1,8 +1,9 @@
 package org.bopre.support.generator.core.processor.render
 
+import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
-import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
+import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.yaml.YamlConfigurationReaderImpl
 import org.bopre.support.generator.core.yaml.data.SourceDefinition
 import java.io.File
@@ -10,7 +11,7 @@ import java.io.File
 class Generators {
 
     companion object {
-        fun fromYaml(file: File): Generator {
+        fun fromYaml(file: File): GeneratorTemplate {
             val yaml: String = file.useLines { it.joinToString("\n") }
             val parsedDocument = YamlConfigurationReaderImpl().readDocument(yaml)
             val builder = PoiDocumentRendererBuilder()
@@ -27,7 +28,15 @@ class Generators {
                     builder.externalSource(sourceDef.id, source)
                 }
             }
-            return builder.build()
+            return object : GeneratorTemplate {
+                override fun instance(params: Map<String, Any>): ConfigurableTemplate.Result<Generator> {
+                    return ConfigurableTemplate.Result.Success(
+                        builder.build(
+                            RenderProperties.of(params)
+                        )
+                    )
+                }
+            }
         }
     }
 

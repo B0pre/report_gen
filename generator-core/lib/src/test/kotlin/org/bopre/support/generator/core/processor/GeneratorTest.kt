@@ -2,7 +2,7 @@ package org.bopre.support.generator.core.processor
 
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.bopre.support.generator.core.processor.data.RenderProperties
+import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generators
 import org.junit.Test
 import java.io.File
@@ -18,9 +18,8 @@ class GeneratorTest {
         val generator = Generators.fromYaml(fileYaml)
         val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
 
-        generator.renderToFile(
-            file,
-            RenderProperties.empty()
+        (generator.instance() as ConfigurableTemplate.Result.Success).value.renderToFile(
+            file
         )
 
         assertTrue(file.exists(), "file was not created")

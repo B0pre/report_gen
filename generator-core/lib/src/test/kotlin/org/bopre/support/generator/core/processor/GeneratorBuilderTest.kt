@@ -48,9 +48,9 @@ class GeneratorBuilderTest {
         val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
             .appendSheet(sheet0)
             .externalSource(sourceId, someSource)
-            .build()
+            .build(RenderProperties.empty())
 
-        renderer.renderToFile(file, RenderProperties.empty())
+        renderer.renderToFile(file)
 
         assertTrue(file.exists(), "file was not created")
         assertSheetInFile(
