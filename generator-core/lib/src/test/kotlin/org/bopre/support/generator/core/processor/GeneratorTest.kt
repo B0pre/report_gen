@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generators
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
 import kotlin.test.assertEquals

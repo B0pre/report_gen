@@ -1,15 +1,15 @@
 package org.bopre.support.generator.core.yaml
 
 import org.bopre.support.generator.core.yaml.data.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class YamlConfigurationReaderImplTest {
 
     lateinit var reader: YamlConfigurationReader
 
-    @Before
+    @BeforeEach
     fun beforeEach() {
         reader = YamlConfigurationReaderImpl()
     }

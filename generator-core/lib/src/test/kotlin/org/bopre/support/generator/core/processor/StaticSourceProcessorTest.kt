@@ -3,7 +3,7 @@ package org.bopre.support.generator.core.processor
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class StaticSourceProcessorTest {

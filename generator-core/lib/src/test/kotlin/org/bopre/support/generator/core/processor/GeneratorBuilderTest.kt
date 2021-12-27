@@ -2,16 +2,19 @@ package org.bopre.support.generator.core.processor
 
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.bopre.support.generator.core.processor.content.*
-import org.bopre.support.generator.core.processor.content.impl.*
+import org.bopre.support.generator.core.processor.content.Content
+import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
+import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
+import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
+import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -24,12 +27,12 @@ class GeneratorBuilderTest {
         val sourceId = "source_id_01"
 
         val someSource = LineSource.static(
-                    listOf(
-                        Line.fromMap(mapOf("id" to "01", "user" to "user_01")),
-                        Line.fromMap(mapOf("id" to "02", "user" to "user_02")),
-                        Line.fromMap(mapOf("id" to "03", "user" to "user_03"))
-                    )
-                )
+            listOf(
+                Line.fromMap(mapOf("id" to "01", "user" to "user_01")),
+                Line.fromMap(mapOf("id" to "02", "user" to "user_02")),
+                Line.fromMap(mapOf("id" to "03", "user" to "user_03"))
+            )
+        )
 
         val columns = listOf(
             SimpleTableColumn(title = "identifier", id = "id"),
