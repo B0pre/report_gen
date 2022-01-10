@@ -29,12 +29,12 @@ class YamlConfigurerTest {
                 DocumentSheet(
                     id = "report_0",
                     name = "report number 0",
-                    chunks = listOf(
-                        ChunkDefinition.TableDefinition(
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
                             id = "table1",
                             title = "table1 for report 0",
-                            source = "source_01",
-                            cols = listOf(
+                            sourceId = "source_01",
+                            columns = listOf(
                                 CellParameters(id = "id", title = "identifier"),
                                 CellParameters(id = "name", title = "username")
                             )

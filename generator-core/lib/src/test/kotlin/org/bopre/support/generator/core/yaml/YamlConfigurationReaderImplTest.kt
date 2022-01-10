@@ -55,12 +55,12 @@ class YamlConfigurationReaderImplTest {
             sheets:
                 - id: report_0
                   name: report number 0
-                  chunks:
+                  content:
                     - type: table
-                      source: source_id
+                      sourceId: source_id
                       id: table1
                       title: table1 for report 0
-                      cols:
+                      columns:
                         - id: id
                           title: identifier
                         - id: name
@@ -75,17 +75,17 @@ class YamlConfigurationReaderImplTest {
                 DocumentSheet(
                     id = "report_0",
                     name = "report number 0",
-                    chunks = listOf(
-                        ChunkDefinition.TableDefinition(
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
                             id = "table1",
                             title = "table1 for report 0",
-                            source = "source_id",
-                            cols = listOf(
+                            sourceId = "source_id",
+                            columns = listOf(
                                 CellParameters(id = "id", title = "identifier"),
                                 CellParameters(id = "name", title = "username")
                             )
                         ),
-                        ChunkDefinition.Separator(23)
+                        ContentDefinition.Separator(23)
                     )
                 )
             ),

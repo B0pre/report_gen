@@ -16,7 +16,7 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
         val parsedDocument = configReader.readDocument(yaml)
         val builder = PoiDocumentRendererBuilder()
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
-            val contents = sheetDef.chunks.map { it.toContent() }.toList()
+            val contents = sheetDef.content.map { it.toContent() }.toList()
             val sheet = SimpleSheet(title = "$index", contents)
             builder.appendSheet(sheet)
         }

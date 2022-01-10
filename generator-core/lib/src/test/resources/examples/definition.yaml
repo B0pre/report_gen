@@ -2,12 +2,12 @@ docname: sample document
 sheets:
   - id: report_0
     name: report number 0
-    chunks:
+    content:
       - type: table
-        source: source_01
+        sourceId: source_01
         id: table1
         title: table1 for report 0
-        cols:
+        columns:
           - id: id
             title: identifier
           - id: name
@@ -15,10 +15,10 @@ sheets:
       - type: separator
         strength: 2
       - type: table
-        source: source_01
+        sourceId: source_01
         id: table2
         title: table1 for report 0
-        cols:
+        columns:
           - id: id
             title: identifier
           - id: name
