@@ -12,7 +12,7 @@ import org.bopre.support.generator.core.yaml.data.SourceDefinition
 
 class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfigurer {
 
-    override fun configure(yaml: String): GeneratorTemplate {
+    override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
         val builder = PoiDocumentRendererBuilder()
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
@@ -26,6 +26,9 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
                     sourceDef.lines.map { Line.fromMap(it) }.toList()
                 )
                 builder.externalSource(sourceDef.id, source)
+            }
+            if (sourceDef is SourceDefinition.ExternalSourceDefinition) {
+                externalSources[sourceDef.name]?.let { builder.externalSource(sourceDef.id, it) };
             }
         }
         return object : GeneratorTemplate {
