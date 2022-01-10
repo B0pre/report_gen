@@ -15,7 +15,7 @@ sheets:
       - type: separator
         strength: 2
       - type: table
-        sourceId: source_01
+        sourceId: source_02
         id: table2
         title: table1 for report 0
         columns:
@@ -33,3 +33,6 @@ sources:
           name: user_02
         - id: 03
           name: user_03
+    - type: external
+      id: source_02
+      name: external_complex_source

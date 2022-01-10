@@ -17,4 +17,10 @@ sealed class SourceDefinition {
         override val id: String, val lines: List<Map<String, String>>
     ) : SourceDefinition()
 
+    @Serializable
+    @SerialName("external")
+    data class ExternalSourceDefinition(
+        override val id: String, val name: String
+    ) : SourceDefinition()
+
 }

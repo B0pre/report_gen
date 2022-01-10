@@ -121,7 +121,7 @@ class YamlConfigurationReaderImplTest {
                         ContentDefinition.TableDefinition(
                             id = "table2",
                             title = "table1 for report 0",
-                            sourceId = "source_01",
+                            sourceId = "source_02",
                             columns = listOf(
                                 CellParameters(id = "id", title = "identifier"),
                                 CellParameters(id = "name", title = "username")
@@ -147,6 +147,10 @@ class YamlConfigurationReaderImplTest {
                             "name" to "user_03"
                         )
                     )
+                ),
+                SourceDefinition.ExternalSourceDefinition(
+                    id = "source_02",
+                    name = "external_complex_source"
                 )
             )
         )
