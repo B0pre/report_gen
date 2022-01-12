@@ -50,21 +50,28 @@ fun interface CellStyleAssertion {
 
     fun assertCell(cellStyle: CellStyle, message: String)
 
-    class CellFontHeightAssertion(val height: Short) : CellStyleAssertion {
+    abstract class CellStyleAssertionRouter : CellStyleAssertion {
+        abstract fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String)
         override fun assertCell(cellStyle: CellStyle, message: String) {
             when (cellStyle) {
                 is XSSFCellStyle -> {
-                    assertNotNull(cellStyle.font, "font was null")
-                    assertEquals(height, cellStyle.font.fontHeightInPoints, "wrong font height: $message")
+                    assertXSSFCell(cellStyle, message)
                 }
                 else -> {
-                    fail("unknown cell style format")
+                    fail("unknown cell style format $cellStyle")
                 }
             }
         }
     }
 
-    class CellBordersAssertion(val type: BorderLocation, val expectedBorder: BorderStyle) : CellStyleAssertion {
+    class CellFontHeightAssertion(val height: Short) : CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            assertNotNull(cellStyle.font, "font was null")
+            assertEquals(height, cellStyle.font.fontHeightInPoints, "wrong font height: $message")
+        }
+    }
+
+    class CellBordersAssertion(val type: BorderLocation, val expectedBorder: BorderStyle) : CellStyleAssertionRouter() {
         enum class BorderLocation {
             LEFT,
             RIGHT,
@@ -72,22 +79,15 @@ fun interface CellStyleAssertion {
             BOTTOM
         }
 
-        override fun assertCell(cellStyle: CellStyle, message: String) {
-            when (cellStyle) {
-                is XSSFCellStyle -> {
-                    assertNotNull(cellStyle.font, "font was null")
-                    val borderStyle: BorderStyle = when (type) {
-                        BorderLocation.LEFT -> cellStyle.borderLeft
-                        BorderLocation.RIGHT -> cellStyle.borderRight
-                        BorderLocation.TOP -> cellStyle.borderTop
-                        BorderLocation.BOTTOM -> cellStyle.borderBottom
-                    }
-                    assertEquals(expected = expectedBorder, actual = borderStyle, "wrong border for $type")
-                }
-                else -> {
-                    fail("unknown cell style format")
-                }
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            assertNotNull(cellStyle.font, "font was null")
+            val borderStyle: BorderStyle = when (type) {
+                BorderLocation.LEFT -> cellStyle.borderLeft
+                BorderLocation.RIGHT -> cellStyle.borderRight
+                BorderLocation.TOP -> cellStyle.borderTop
+                BorderLocation.BOTTOM -> cellStyle.borderBottom
             }
+            assertEquals(expected = expectedBorder, actual = borderStyle, "wrong border for $type")
         }
     }
 
