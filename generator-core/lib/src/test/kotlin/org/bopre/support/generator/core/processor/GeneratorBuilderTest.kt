@@ -1,7 +1,5 @@
 package org.bopre.support.generator.core.processor
 
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
@@ -12,10 +10,8 @@ import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
+import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
 import org.junit.jupiter.api.Test
-import java.io.File
-import java.io.FileInputStream
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class GeneratorBuilderTest {
@@ -74,20 +70,4 @@ class GeneratorBuilderTest {
         )
     }
 
-    fun assertSheetInFile(file: File, sheetId: Int, expectedSheetValues: Array<Array<String>>) {
-        val inputStream = FileInputStream(file)
-        //Instantiate Excel workbook using existing file:
-        var xlWb = WorkbookFactory.create(inputStream)
-
-        for (x in expectedSheetValues.indices) {
-            for (y in expectedSheetValues[x].indices) {
-                val xlWs = xlWb.getSheetAt(sheetId)
-                val expected = expectedSheetValues[x][y]
-                val actual = xlWs.getRow(x)
-                    .getCell(y, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
-                    .toString()
-                assertEquals(expected, actual, "wrong value at [$x:$y]")
-            }
-        }
-    }
 }
