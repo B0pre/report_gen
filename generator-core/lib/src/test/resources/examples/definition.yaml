@@ -23,21 +23,27 @@ sheets:
             title: identifier
             style:
               fontSize: 20
+              alignV: CENTER
+              alignH: CENTER
+              wrapped: true
+              bold: true
+              italic: true
+              strikeout: true
               borders:
                 left: THIN
                 top: MEDIUM
           - id: name
             title: username
 sources:
-    - type: static
-      id: source_01
-      lines:
-        - id: 01
-          name: user_01
-        - id: 02
-          name: user_02
-        - id: 03
-          name: user_03
-    - type: external
-      id: source_02
-      name: external_complex_source
+  - type: static
+    id: source_01
+    lines:
+      - id: 01
+        name: user_01
+      - id: 02
+        name: user_02
+      - id: 03
+        name: user_03
+  - type: external
+    id: source_02
+    name: external_complex_source

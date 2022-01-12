@@ -1,6 +1,8 @@
 package org.bopre.support.generator.core.yaml
 
 import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.bopre.support.generator.core.yaml.data.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -132,7 +134,13 @@ class YamlConfigurationReaderImplTest {
                                             right = BorderStyle.NONE,
                                             top = BorderStyle.MEDIUM,
                                             bottom = BorderStyle.NONE
-                                        )
+                                        ),
+                                        alignV = VerticalAlignment.CENTER,
+                                        alignH = HorizontalAlignment.CENTER,
+                                        wrapped = true,
+                                        bold = true,
+                                        italic = true,
+                                        strikeout = true
                                     )
                                 ),
                                 CellParameters(id = "name", title = "username")

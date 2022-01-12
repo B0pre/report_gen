@@ -5,6 +5,69 @@ import org.apache.poi.ss.usermodel.VerticalAlignment
 
 interface CellSettings {
 
+    class CellSettingsBuilder {
+        private var height: Short? = null
+        private var borders: CellBorders? = null
+        private var isWrapped: Boolean? = null
+        private var verticalAlignment: VerticalAlignment? = null
+        private var horizontalAlignment: HorizontalAlignment? = null
+        private var isBold: Boolean? = null
+        private var isItalic: Boolean? = null
+        private var isStrikeout: Boolean? = null
+
+        fun height(height: Short): CellSettingsBuilder {
+            this.height = height
+            return this
+        }
+
+        fun borders(borders: CellBorders): CellSettingsBuilder {
+            this.borders = borders
+            return this
+        }
+
+        fun isWrapped(isWrapped: Boolean): CellSettingsBuilder {
+            this.isWrapped = isWrapped
+            return this
+        }
+
+        fun verticalAlignment(verticalAlignment: VerticalAlignment): CellSettingsBuilder {
+            this.verticalAlignment = verticalAlignment
+            return this
+        }
+
+        fun horizontalAlignment(horizontalAlignment: HorizontalAlignment): CellSettingsBuilder {
+            this.horizontalAlignment = horizontalAlignment
+            return this
+        }
+
+        fun isBold(isBold: Boolean): CellSettingsBuilder {
+            this.isBold = isBold
+            return this
+        }
+
+        fun isItalic(isItalic: Boolean): CellSettingsBuilder {
+            this.isItalic = isItalic
+            return this
+        }
+
+        fun isStrikeout(isStrikeout: Boolean): CellSettingsBuilder {
+            this.isStrikeout = isStrikeout
+            return this
+        }
+
+        fun build(): CellSettings =
+            object : CellSettings {
+                override fun getHeightInPoints(): Short? = height
+                override fun getBorders(): CellBorders? = borders
+                override fun getIsWrapped(): Boolean? = isWrapped
+                override fun getVerticalAlignment(): VerticalAlignment? = verticalAlignment
+                override fun getHorizontalAlignment(): HorizontalAlignment? = horizontalAlignment
+                override fun getBold(): Boolean? = isBold
+                override fun getItalic(): Boolean? = isItalic
+                override fun getStrikeout(): Boolean? = isStrikeout
+            }
+    }
+
     companion object {
         fun create(
             height: Short? = null,
@@ -40,6 +103,8 @@ interface CellSettings {
                 override fun getStrikeout(): Boolean? = null
             }
         }
+
+        fun builder(): CellSettingsBuilder = CellSettingsBuilder()
     }
 
 

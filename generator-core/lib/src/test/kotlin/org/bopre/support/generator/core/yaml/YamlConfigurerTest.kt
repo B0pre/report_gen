@@ -1,13 +1,16 @@
 package org.bopre.support.generator.core.yaml
 
 import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generator
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
-import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellFontSettingsAssertion.AssertFontType
 import org.bopre.support.generator.core.testutils.xls.GenericCell
 import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
@@ -214,7 +217,13 @@ class YamlConfigurerTest {
                                             right = BorderStyle.MEDIUM,
                                             top = BorderStyle.MEDIUM_DASHED,
                                             bottom = BorderStyle.THIN
-                                        )
+                                        ),
+                                        alignV = VerticalAlignment.CENTER,
+                                        alignH = HorizontalAlignment.CENTER,
+                                        wrapped = true,
+                                        bold = true,
+                                        italic = true,
+                                        strikeout = true
                                     )
                                 )
                             )
@@ -253,7 +262,14 @@ class YamlConfigurerTest {
                 GenericCell(1, 0, CellBordersAssertion(BorderLocation.LEFT, BorderStyle.HAIR)),
                 GenericCell(1, 0, CellBordersAssertion(BorderLocation.RIGHT, BorderStyle.MEDIUM)),
                 GenericCell(1, 0, CellBordersAssertion(BorderLocation.TOP, BorderStyle.MEDIUM_DASHED)),
-                GenericCell(1, 0, CellBordersAssertion(BorderLocation.BOTTOM, BorderStyle.THIN))
+                GenericCell(1, 0, CellBordersAssertion(BorderLocation.BOTTOM, BorderStyle.THIN)),
+
+                GenericCell(1, 0, CellVerticalAlignmentAssertion(VerticalAlignment.CENTER)),
+                GenericCell(1, 0, CellHorizontalAlignmentAssertion(HorizontalAlignment.CENTER)),
+                GenericCell(1, 0, CellIsWrappedAssertion(true)),
+                GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.BOLD, true)),
+                GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.ITALIC, true)),
+                GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, true))
             )
         )
     }
