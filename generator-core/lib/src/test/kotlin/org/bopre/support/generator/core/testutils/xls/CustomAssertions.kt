@@ -1,5 +1,6 @@
 package org.bopre.support.generator.core.testutils.xls
 
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -62,6 +63,34 @@ fun interface CellStyleAssertion {
             }
         }
     }
+
+    class CellBordersAssertion(val type: BorderLocation, val expectedBorder: BorderStyle) : CellStyleAssertion {
+        enum class BorderLocation {
+            LEFT,
+            RIGHT,
+            TOP,
+            BOTTOM
+        }
+
+        override fun assertCell(cellStyle: CellStyle, message: String) {
+            when (cellStyle) {
+                is XSSFCellStyle -> {
+                    assertNotNull(cellStyle.font, "font was null")
+                    val borderStyle: BorderStyle = when (type) {
+                        BorderLocation.LEFT -> cellStyle.borderLeft
+                        BorderLocation.RIGHT -> cellStyle.borderRight
+                        BorderLocation.TOP -> cellStyle.borderTop
+                        BorderLocation.BOTTOM -> cellStyle.borderBottom
+                    }
+                    assertEquals(expected = expectedBorder, actual = borderStyle, "wrong border for $type")
+                }
+                else -> {
+                    fail("unknown cell style format")
+                }
+            }
+        }
+    }
+
 }
 
 data class GenericCell<T>(

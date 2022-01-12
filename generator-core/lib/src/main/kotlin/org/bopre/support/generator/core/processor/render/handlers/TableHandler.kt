@@ -1,8 +1,11 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
+import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.TableContent
+import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.RenderContext
 
@@ -34,10 +37,7 @@ class TableHandler : ContentHandler {
             var bodyColumnNum = 0
             for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
-                val newStyle = sheet.workbook.createCellStyle()
-                val newFont = sheet.workbook.createFont()
-                column.getSettings().getHeightInPoints()?.let { newFont.fontHeightInPoints = it }
-                newStyle.setFont(newFont)
+                val newStyle = createStyle(sheet.workbook, column.getSettings())
                 cell.setCellStyle(newStyle)
                 cell.setCellValue(column.getValue(line))
             }
@@ -47,6 +47,20 @@ class TableHandler : ContentHandler {
 
     override fun supports(content: Content): Boolean {
         return content is TableContent
+    }
+
+    private fun createStyle(workbook: XSSFWorkbook, settings: CellSettings): CellStyle {
+        val newStyle = workbook.createCellStyle()
+        val newFont = workbook.createFont()
+        settings.getHeightInPoints()?.let { newFont.fontHeightInPoints = it }
+        settings.getBorders()?.let {
+            newStyle.borderLeft = it.left
+            newStyle.borderRight = it.right
+            newStyle.borderTop = it.top
+            newStyle.borderBottom = it.bottom
+        }
+        newStyle.setFont(newFont)
+        return newStyle
     }
 
 }

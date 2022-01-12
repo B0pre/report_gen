@@ -1,11 +1,13 @@
 package org.bopre.support.generator.core.processor
 
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.style.CellBorders
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
@@ -13,6 +15,7 @@ import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
 import org.bopre.support.generator.core.testutils.xls.GenericCell
 import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
@@ -41,6 +44,36 @@ class GeneratorBuilderTest {
                         GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(18))
                     )
                 ),
+                Arguments.of(
+                    Named.of(
+                        "cell borders", CellSettings.create(
+                            height = 18,
+                            borders = CellBorders(
+                                left = BorderStyle.THIN,
+                                right = BorderStyle.DASHED,
+                                bottom = BorderStyle.HAIR,
+                                top = BorderStyle.MEDIUM
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(
+                            0, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.TOP, BorderStyle.NONE)
+                        ),
+                        GenericCell(
+                            1, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.LEFT, BorderStyle.THIN)
+                        ),
+                        GenericCell(
+                            1, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.RIGHT, BorderStyle.DASHED)
+                        ),
+                        GenericCell(
+                            1, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.BOTTOM, BorderStyle.HAIR)
+                        ),
+                        GenericCell(
+                            1, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.TOP, BorderStyle.MEDIUM)
+                        )
+                    )
+                )
             )
         }
     }
