@@ -59,6 +59,24 @@ class TableHandler : ContentHandler {
             newStyle.borderTop = it.top
             newStyle.borderBottom = it.bottom
         }
+        settings.getIsWrapped()?.let {
+            newStyle.wrapText = it
+        }
+        settings.getHorizontalAlignment()?.let {
+            newStyle.alignment = it
+        }
+        settings.getVerticalAlignment()?.let {
+            newStyle.verticalAlignment = it
+        }
+        settings.getBold()?.let {
+            newFont.bold = it
+        }
+        settings.getItalic()?.let {
+            newFont.italic = it
+        }
+        settings.getStrikeout()?.let {
+            newFont.strikeout = it
+        }
         newStyle.setFont(newFont)
         return newStyle
     }

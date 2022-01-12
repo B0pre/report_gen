@@ -1,9 +1,6 @@
 package org.bopre.support.generator.core.testutils.xls
 
-import org.apache.poi.ss.usermodel.BorderStyle
-import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import java.io.File
 import java.io.FileInputStream
@@ -64,14 +61,61 @@ fun interface CellStyleAssertion {
         }
     }
 
-    class CellFontHeightAssertion(val height: Short) : CellStyleAssertionRouter() {
+    class CellFontSettingsAssertion(
+        private val assertType: AssertFontType,
+        private val isOf: Boolean
+    ) : CellStyleAssertionRouter() {
+        enum class AssertFontType {
+            BOLD,
+            ITALIC,
+            STRIKEOUT
+        }
+
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            val font = cellStyle.font
+            assertNotNull(cellStyle.font, "font was null")
+
+            val b: Boolean = when (assertType) {
+                AssertFontType.BOLD -> font.bold
+                AssertFontType.ITALIC -> font.italic
+                AssertFontType.STRIKEOUT -> font.strikeout
+                else -> fail("$assertType is not supported yet")
+            }
+            assertEquals(isOf, b, "wrong $assertType setting: $message")
+        }
+    }
+
+    class CellIsWrappedAssertion(private val isWrapped: Boolean) : CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            assertEquals(isWrapped, cellStyle.wrapText, "wrong wrapping setting: $message")
+        }
+    }
+
+    class CellHorizontalAlignmentAssertion(private val align: HorizontalAlignment) : CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            assertEquals(align, cellStyle.alignment, "wrong horizontal alignment: $message")
+        }
+    }
+
+    class CellVerticalAlignmentAssertion(private val align: VerticalAlignment) : CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            assertEquals(align, cellStyle.verticalAlignment, "wrong vertical alignment: $message")
+        }
+    }
+
+    class CellFontHeightAssertion(
+        private val height: Short
+    ) : CellStyleAssertionRouter() {
         override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
             assertNotNull(cellStyle.font, "font was null")
             assertEquals(height, cellStyle.font.fontHeightInPoints, "wrong font height: $message")
         }
     }
 
-    class CellBordersAssertion(val type: BorderLocation, val expectedBorder: BorderStyle) : CellStyleAssertionRouter() {
+    class CellBordersAssertion(
+        private val type: BorderLocation,
+        private val expectedBorder: BorderStyle
+    ) : CellStyleAssertionRouter() {
         enum class BorderLocation {
             LEFT,
             RIGHT,

@@ -1,6 +1,8 @@
 package org.bopre.support.generator.core.processor
 
 import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
@@ -15,7 +17,9 @@ import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellFontSettingsAssertion.AssertFontType
 import org.bopre.support.generator.core.testutils.xls.GenericCell
 import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
@@ -33,6 +37,59 @@ class GeneratorBuilderTest {
         @JvmStatic
         fun styleTestCases(): Stream<Arguments> {
             return Stream.of(
+                Arguments.of(
+                    Named.of(
+                        "wrap text",
+                        listOf(
+                            CellSettings.create(
+                                isWrapped = true
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(0, 0, CellStyleAssertion.CellIsWrappedAssertion(false)),
+                        GenericCell(1, 0, CellStyleAssertion.CellIsWrappedAssertion(true))
+                    )
+                ),
+                Arguments.of(
+                    Named.of(
+                        "alignment text",
+                        listOf(
+                            CellSettings.create(
+                                verticalAlignment = VerticalAlignment.CENTER
+                            ),
+                            CellSettings.create(
+                                horizontalAlignment = HorizontalAlignment.CENTER
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(0, 0, CellVerticalAlignmentAssertion(VerticalAlignment.BOTTOM)),
+                        GenericCell(0, 0, CellHorizontalAlignmentAssertion(HorizontalAlignment.GENERAL)),
+                        GenericCell(1, 0, CellVerticalAlignmentAssertion(VerticalAlignment.CENTER)),
+                        GenericCell(1, 1, CellHorizontalAlignmentAssertion(HorizontalAlignment.CENTER))
+                    )
+                ),
+                Arguments.of(
+                    Named.of(
+                        "text styles",
+                        listOf(
+                            CellSettings.create(
+                                isBold = true,
+                                isItalic = true,
+                                isStrikeout = true
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(0, 0, CellFontSettingsAssertion(AssertFontType.BOLD, false)),
+                        GenericCell(0, 0, CellFontSettingsAssertion(AssertFontType.ITALIC, false)),
+                        GenericCell(0, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, false)),
+                        GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.BOLD, true)),
+                        GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.ITALIC, true)),
+                        GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, true)),
+                    )
+                ),
                 Arguments.of(
                     Named.of(
                         "font size test case", listOf(
