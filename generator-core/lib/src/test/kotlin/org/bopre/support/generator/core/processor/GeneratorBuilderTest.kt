@@ -5,16 +5,58 @@ import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorCo
 import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.GenericCell
+import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class GeneratorBuilderTest {
+
+    @Test
+    fun `test style font height`() {
+
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("column" to "value"))
+            )
+        )
+
+        val columns = listOf(
+            SimpleTableColumn(title = "column", id = "column", style = CellSettings.create(height = 18))
+        )
+
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertCellStyles(
+            file, 0, listOf(
+                GenericCell(0, 0, CellStyleAssertion.CellFontHeightAssertion(11)),
+                GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(18))
+            )
+        )
+    }
 
     @Test
     fun test() {

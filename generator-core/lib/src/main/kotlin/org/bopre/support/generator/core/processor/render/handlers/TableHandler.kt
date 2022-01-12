@@ -34,6 +34,11 @@ class TableHandler : ContentHandler {
             var bodyColumnNum = 0
             for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
+                val newStyle = sheet.workbook.createCellStyle()
+                val newFont = sheet.workbook.createFont()
+                column.getSettings().getHeightInPoints()?.let { newFont.fontHeightInPoints = it }
+                newStyle.setFont(newFont)
+                cell.setCellStyle(newStyle)
                 cell.setCellValue(column.getValue(line))
             }
         }
