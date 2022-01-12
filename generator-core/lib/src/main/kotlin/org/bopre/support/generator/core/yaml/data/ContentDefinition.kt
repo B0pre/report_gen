@@ -7,6 +7,7 @@ import org.bopre.support.generator.core.processor.content.TableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.style.CellBorders
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 
 @Serializable
@@ -31,8 +32,17 @@ sealed class ContentDefinition {
             val colTitle = cell.title ?: "$index"
             val colId = cell.id ?: "$index"
             var cellSettings: CellSettings = CellSettings.empty()
-            if (cell.style != null)
-                cellSettings = CellSettings.create(cell.style.fontSize)
+            if (cell.style != null) {
+                val bordersBuilder = CellBorders.builder()
+                cell.style.borders?.left?.let { bordersBuilder.left(it) }
+                cell.style.borders?.right?.let { bordersBuilder.right(it) }
+                cell.style.borders?.top?.let { bordersBuilder.top(it) }
+                cell.style.borders?.bottom?.let { bordersBuilder.bottom(it) }
+                cellSettings = CellSettings.create(
+                    height = cell.style.fontSize,
+                    borders = bordersBuilder.build()
+                )
+            }
             return SimpleTableColumn(title = colTitle, id = colId, style = cellSettings)
         }
     }

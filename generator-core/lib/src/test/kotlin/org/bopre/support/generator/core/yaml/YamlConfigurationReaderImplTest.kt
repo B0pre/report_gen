@@ -1,5 +1,6 @@
 package org.bopre.support.generator.core.yaml
 
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.bopre.support.generator.core.yaml.data.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -123,7 +124,17 @@ class YamlConfigurationReaderImplTest {
                             title = "table1 for report 0",
                             sourceId = "source_02",
                             columns = listOf(
-                                CellParameters(id = "id", title = "identifier", style = StyleDefinition(20)),
+                                CellParameters(
+                                    id = "id", title = "identifier", style = StyleDefinition(
+                                        fontSize = 20,
+                                        borders = CellBordersYaml(
+                                            left = BorderStyle.THIN,
+                                            right = BorderStyle.NONE,
+                                            top = BorderStyle.MEDIUM,
+                                            bottom = BorderStyle.NONE
+                                        )
+                                    )
+                                ),
                                 CellParameters(id = "name", title = "username")
                             )
                         ),

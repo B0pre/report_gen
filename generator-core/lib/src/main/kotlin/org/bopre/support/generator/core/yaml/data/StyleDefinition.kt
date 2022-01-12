@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StyleDefinition(
-    val fontSize: Short
+    val fontSize: Short? = null,
+    val borders: CellBordersYaml? = null
 )

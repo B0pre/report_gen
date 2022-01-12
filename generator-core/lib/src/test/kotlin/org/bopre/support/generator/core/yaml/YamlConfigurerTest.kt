@@ -1,10 +1,13 @@
 package org.bopre.support.generator.core.yaml
 
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generator
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
 import org.bopre.support.generator.core.testutils.xls.GenericCell
 import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
@@ -185,6 +188,72 @@ class YamlConfigurerTest {
         assertCellStyles(
             file, 0, listOf(
                 GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(20))
+            )
+        )
+    }
+
+    @Test
+    fun `yaml config cell with borders`() {
+        val document = Document(
+            docname = "sample",
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report number 0",
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
+                            id = "table1",
+                            title = "table1 for report 0",
+                            sourceId = "source_01",
+                            columns = listOf(
+                                CellParameters(
+                                    id = "id", title = "identifier", style = StyleDefinition(
+                                        fontSize = 20,
+                                        borders = CellBordersYaml(
+                                            left = BorderStyle.HAIR,
+                                            right = BorderStyle.MEDIUM,
+                                            top = BorderStyle.MEDIUM_DASHED,
+                                            bottom = BorderStyle.THIN
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            sources = listOf(
+                SourceDefinition.static(
+                    "source_01",
+                    listOf(
+                        mapOf("id" to "01"),
+                    )
+                )
+            )
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertCellStyles(
+            file, 0, listOf(
+                GenericCell(0, 0, CellBordersAssertion(BorderLocation.LEFT, BorderStyle.NONE)),
+                GenericCell(0, 0, CellBordersAssertion(BorderLocation.RIGHT, BorderStyle.NONE)),
+                GenericCell(0, 0, CellBordersAssertion(BorderLocation.TOP, BorderStyle.NONE)),
+                GenericCell(0, 0, CellBordersAssertion(BorderLocation.BOTTOM, BorderStyle.NONE)),
+
+                GenericCell(1, 0, CellBordersAssertion(BorderLocation.LEFT, BorderStyle.HAIR)),
+                GenericCell(1, 0, CellBordersAssertion(BorderLocation.RIGHT, BorderStyle.MEDIUM)),
+                GenericCell(1, 0, CellBordersAssertion(BorderLocation.TOP, BorderStyle.MEDIUM_DASHED)),
+                GenericCell(1, 0, CellBordersAssertion(BorderLocation.BOTTOM, BorderStyle.THIN))
             )
         )
     }

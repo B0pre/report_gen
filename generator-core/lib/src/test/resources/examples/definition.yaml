@@ -23,6 +23,9 @@ sheets:
             title: identifier
             style:
               fontSize: 20
+              borders:
+                left: THIN
+                top: MEDIUM
           - id: name
             title: username
 sources:
