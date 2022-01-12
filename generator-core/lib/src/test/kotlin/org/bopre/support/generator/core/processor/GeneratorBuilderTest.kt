@@ -35,8 +35,10 @@ class GeneratorBuilderTest {
             return Stream.of(
                 Arguments.of(
                     Named.of(
-                        "font size test case", CellSettings.create(
-                            height = 18
+                        "font size test case", listOf(
+                            CellSettings.create(
+                                height = 18
+                            )
                         )
                     ),
                     listOf(
@@ -46,13 +48,15 @@ class GeneratorBuilderTest {
                 ),
                 Arguments.of(
                     Named.of(
-                        "cell borders", CellSettings.create(
-                            height = 18,
-                            borders = CellBorders(
-                                left = BorderStyle.THIN,
-                                right = BorderStyle.DASHED,
-                                bottom = BorderStyle.HAIR,
-                                top = BorderStyle.MEDIUM
+                        "cell borders", listOf(
+                            CellSettings.create(
+                                height = 18,
+                                borders = CellBorders(
+                                    left = BorderStyle.THIN,
+                                    right = BorderStyle.DASHED,
+                                    bottom = BorderStyle.HAIR,
+                                    top = BorderStyle.MEDIUM
+                                )
                             )
                         )
                     ),
@@ -81,7 +85,7 @@ class GeneratorBuilderTest {
     @MethodSource(value = ["styleTestCases"])
     @ParameterizedTest(name = "{argumentsWithNames}")
     fun `test cell style`(
-        cellSettings: CellSettings,
+        cellSettings: List<CellSettings>,
         assertions: List<GenericCell<CellStyleAssertion>>
     ) {
         val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
@@ -93,9 +97,9 @@ class GeneratorBuilderTest {
             )
         )
 
-        val columns = listOf(
-            SimpleTableColumn(title = "column", id = "column", style = cellSettings)
-        )
+        val columns = cellSettings.mapIndexed { index, elem ->
+            SimpleTableColumn(title = "column#$index", id = "column#$index", style = elem)
+        }.toList()
 
         val contentsForSheet0: List<Content> = listOf(
             SimpleTableContent(columns, sourceId),
