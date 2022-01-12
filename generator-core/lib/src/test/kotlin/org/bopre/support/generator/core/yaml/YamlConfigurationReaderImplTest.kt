@@ -123,7 +123,7 @@ class YamlConfigurationReaderImplTest {
                             title = "table1 for report 0",
                             sourceId = "source_02",
                             columns = listOf(
-                                CellParameters(id = "id", title = "identifier"),
+                                CellParameters(id = "id", title = "identifier", style = StyleDefinition(20)),
                                 CellParameters(id = "name", title = "username")
                             )
                         ),

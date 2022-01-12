@@ -4,6 +4,9 @@ import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generator
+import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.GenericCell
+import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
 import org.bopre.support.generator.core.yaml.data.*
 import org.junit.jupiter.api.BeforeEach
@@ -134,6 +137,54 @@ class YamlConfigurerTest {
                 arrayOf("01", "user_01"),
                 arrayOf("02", "user_02"),
                 arrayOf("03", "user_03")
+            )
+        )
+    }
+
+    @Test
+    fun `yaml config cell with font size`() {
+        val document = Document(
+            docname = "sample",
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report number 0",
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
+                            id = "table1",
+                            title = "table1 for report 0",
+                            sourceId = "source_01",
+                            columns = listOf(
+                                CellParameters(id = "id", title = "identifier", style = StyleDefinition(20))
+                            )
+                        )
+                    )
+                )
+            ),
+            sources = listOf(
+                SourceDefinition.static(
+                    "source_01",
+                    listOf(
+                        mapOf("id" to "01"),
+                    )
+                )
+            )
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertCellStyles(
+            file, 0, listOf(
+                GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(20))
             )
         )
     }

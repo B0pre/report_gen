@@ -7,6 +7,7 @@ import org.bopre.support.generator.core.processor.content.TableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.style.CellSettings
 
 @Serializable
 sealed class ContentDefinition {
@@ -29,7 +30,10 @@ sealed class ContentDefinition {
         private fun toColumn(cell: CellParameters, index: Int): TableColumn {
             val colTitle = cell.title ?: "$index"
             val colId = cell.id ?: "$index"
-            return SimpleTableColumn(title = colTitle, id = colId)
+            var cellSettings: CellSettings = CellSettings.empty()
+            if (cell.style != null)
+                cellSettings = CellSettings.create(cell.style.fontSize)
+            return SimpleTableColumn(title = colTitle, id = colId, style = cellSettings)
         }
     }
 

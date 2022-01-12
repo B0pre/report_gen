@@ -21,6 +21,8 @@ sheets:
         columns:
           - id: id
             title: identifier
+            style:
+              fontSize: 20
           - id: name
             title: username
 sources:
