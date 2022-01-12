@@ -1,5 +1,6 @@
 package org.bopre.support.generator.core.processor
 
+import org.apache.poi.xssf.usermodel.XSSFFont
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
@@ -15,14 +16,41 @@ import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
 import org.bopre.support.generator.core.testutils.xls.GenericCell
 import org.bopre.support.generator.core.testutils.xls.assertCellStyles
 import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
+import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 import kotlin.test.assertTrue
 
 class GeneratorBuilderTest {
 
-    @Test
-    fun `test style font height`() {
+    companion object {
+        @JvmStatic
+        fun styleTestCases(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(
+                    Named.of(
+                        "font size test case", CellSettings.create(
+                            height = 18
+                        )
+                    ),
+                    listOf(
+                        GenericCell(0, 0, CellStyleAssertion.CellFontHeightAssertion(XSSFFont.DEFAULT_FONT_SIZE)),
+                        GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(18))
+                    )
+                ),
+            )
+        }
+    }
 
+    @MethodSource(value = ["styleTestCases"])
+    @ParameterizedTest(name = "{argumentsWithNames}")
+    fun `test cell style`(
+        cellSettings: CellSettings,
+        assertions: List<GenericCell<CellStyleAssertion>>
+    ) {
         val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
         val sourceId = "source_id_01"
 
@@ -33,7 +61,7 @@ class GeneratorBuilderTest {
         )
 
         val columns = listOf(
-            SimpleTableColumn(title = "column", id = "column", style = CellSettings.create(height = 18))
+            SimpleTableColumn(title = "column", id = "column", style = cellSettings)
         )
 
         val contentsForSheet0: List<Content> = listOf(
@@ -50,12 +78,7 @@ class GeneratorBuilderTest {
         renderer.renderToFile(file)
 
         assertTrue(file.exists(), "file was not created")
-        assertCellStyles(
-            file, 0, listOf(
-                GenericCell(0, 0, CellStyleAssertion.CellFontHeightAssertion(11)),
-                GenericCell(1, 0, CellStyleAssertion.CellFontHeightAssertion(18))
-            )
-        )
+        assertCellStyles(file, 0, assertions)
     }
 
     @Test

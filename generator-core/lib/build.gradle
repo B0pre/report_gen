@@ -39,6 +39,9 @@ dependencies {
 
     testImplementation group: 'org.mockito.kotlin', name: 'mockito-kotlin', version: '4.0.0'
 
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.2'
+
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
 
