@@ -7,6 +7,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment
 @Serializable
 data class StyleDefinition(
     val fontSize: Short? = null,
+    val font: String? = null,
+
     val borders: CellBordersYaml? = null,
 
     val alignV: VerticalAlignment? = null,
@@ -17,4 +19,5 @@ data class StyleDefinition(
     val strikeout: Boolean? = null,
 
     val wrapped: Boolean? = null
+
 )

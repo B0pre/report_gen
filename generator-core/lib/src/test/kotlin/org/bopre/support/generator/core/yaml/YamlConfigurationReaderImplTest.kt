@@ -129,6 +129,7 @@ class YamlConfigurationReaderImplTest {
                                 CellParameters(
                                     id = "id", title = "identifier", style = StyleDefinition(
                                         fontSize = 20,
+                                        font = "Arial",
                                         borders = CellBordersYaml(
                                             left = BorderStyle.THIN,
                                             right = BorderStyle.NONE,

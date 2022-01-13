@@ -212,6 +212,7 @@ class YamlConfigurerTest {
                                 CellParameters(
                                     id = "id", title = "identifier", style = StyleDefinition(
                                         fontSize = 20,
+                                        font = "Times New Roman",
                                         borders = CellBordersYaml(
                                             left = BorderStyle.HAIR,
                                             right = BorderStyle.MEDIUM,
@@ -269,7 +270,9 @@ class YamlConfigurerTest {
                 GenericCell(1, 0, CellIsWrappedAssertion(true)),
                 GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.BOLD, true)),
                 GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.ITALIC, true)),
-                GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, true))
+                GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, true)),
+
+                GenericCell(1, 0, CellFontNameAlignmentAssertion("Times New Roman"))
             )
         )
     }

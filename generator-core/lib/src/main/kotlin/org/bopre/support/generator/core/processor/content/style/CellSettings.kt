@@ -56,6 +56,11 @@ interface CellSettings {
             return this
         }
 
+        fun font(font: String): CellSettingsBuilder {
+            this.font = font
+            return this
+        }
+
         fun build(): CellSettings =
             object : CellSettings {
                 override fun getHeightInPoints(): Short? = height
