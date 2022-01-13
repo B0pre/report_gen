@@ -33,6 +33,7 @@ sheets:
                 left: THIN
                 top: MEDIUM
               font: Arial
+              format: 0.00
           - id: name
             title: username
 sources:

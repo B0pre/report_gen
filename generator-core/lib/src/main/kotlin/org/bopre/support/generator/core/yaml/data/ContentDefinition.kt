@@ -52,6 +52,8 @@ sealed class ContentDefinition {
 
                 cell.style.font?.let { cellSettingsBuilder.font(it) }
 
+                cell.style.format?.let { cellSettingsBuilder.dataFormat(it) }
+
                 cellSettingsBuilder.borders(bordersBuilder.build())
             }
             return SimpleTableColumn(title = colTitle, id = colId, style = cellSettingsBuilder.build())

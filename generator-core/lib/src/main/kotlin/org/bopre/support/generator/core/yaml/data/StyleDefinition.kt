@@ -18,6 +18,7 @@ data class StyleDefinition(
     val italic: Boolean? = null,
     val strikeout: Boolean? = null,
 
-    val wrapped: Boolean? = null
+    val wrapped: Boolean? = null,
 
+    val format: String? = null
 )

@@ -141,7 +141,8 @@ class YamlConfigurationReaderImplTest {
                                         wrapped = true,
                                         bold = true,
                                         italic = true,
-                                        strikeout = true
+                                        strikeout = true,
+                                        format = "0.00"
                                     )
                                 ),
                                 CellParameters(id = "name", title = "username")

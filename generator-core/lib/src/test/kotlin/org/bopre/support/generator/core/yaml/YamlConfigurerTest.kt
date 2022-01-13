@@ -287,7 +287,8 @@ class YamlConfigurerTest {
                                         wrapped = true,
                                         bold = true,
                                         italic = true,
-                                        strikeout = true
+                                        strikeout = true,
+                                        format = "0.00"
                                     )
                                 )
                             )
@@ -335,7 +336,9 @@ class YamlConfigurerTest {
                 GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.ITALIC, true)),
                 GenericCell(1, 0, CellFontSettingsAssertion(AssertFontType.STRIKEOUT, true)),
 
-                GenericCell(1, 0, CellFontNameAlignmentAssertion("Times New Roman"))
+                GenericCell(1, 0, CellFontNameAlignmentAssertion("Times New Roman")),
+
+                GenericCell(1, 0, CellDataFormatAssertion("0.00")),
             )
         )
     }
