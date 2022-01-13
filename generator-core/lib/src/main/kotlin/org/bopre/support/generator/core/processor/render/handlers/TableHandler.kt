@@ -1,5 +1,6 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
+import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -8,8 +9,15 @@ import org.bopre.support.generator.core.processor.content.TableContent
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.RenderContext
+import java.time.LocalDate
+import java.util.*
 
 class TableHandler : ContentHandler {
+
+    companion object {
+        private const val DEFAULT_DATE_FORMAT: String = "d/m/yyyy"
+    }
+
     override fun handleContent(
         sheet: XSSFSheet,
         content: Content,
@@ -39,10 +47,34 @@ class TableHandler : ContentHandler {
                 val cell = bodyRow.createCell(bodyColumnNum++)
                 val newStyle = createStyle(sheet.workbook, column.getSettings())
                 cell.setCellStyle(newStyle)
-                cell.setCellValue(column.getValue(line))
+                cell.setCellValueGeneric(column.getValue(line))
             }
         }
         return currentRowNum
+    }
+
+    private fun Cell.setCellValueGeneric(value: Any) {
+        if (value is String) {
+            this.setCellValue(value)
+            return
+        }
+        if (value is Number) {
+            this.setCellValue(value.toDouble())
+            return
+        }
+        if (value is Date) {
+            val helper = this.sheet.workbook.creationHelper
+            this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
+            this.setCellValue(value)
+            return
+        }
+        if (value is LocalDate) {
+            val helper = this.sheet.workbook.creationHelper
+            this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
+            this.setCellValue(value)
+            return
+        }
+        this.setCellValue(value.toString())
     }
 
     override fun supports(content: Content): Boolean {

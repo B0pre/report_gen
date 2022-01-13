@@ -1,6 +1,7 @@
 package org.bopre.support.generator.core.testutils.xls
 
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import java.io.File
 import java.io.FileInputStream
@@ -40,6 +41,44 @@ fun assertCellStyles(file: File, sheetId: Int, assertions: List<GenericCell<Cell
             .getCell(styleAssertion.col, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
             .toString()
         styleAssertion.value.assertCell(actual, "($cell) [${styleAssertion.row}:${styleAssertion.col}]")
+    }
+}
+
+fun assertCells(file: File, sheetId: Int, assertions: List<GenericCell<CellAssertion>>) {
+    val inputStream = FileInputStream(file)
+    //Instantiate Excel workbook using existing file:
+    val xlWb = WorkbookFactory.create(inputStream)
+
+    val xlWs = xlWb.getSheetAt(sheetId)
+    for (styleAssertion in assertions) {
+        val cell = xlWs.getRow(styleAssertion.row)
+            .getCell(styleAssertion.col, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+        styleAssertion.value.assertCell(cell, "($cell) [${styleAssertion.row}:${styleAssertion.col}]")
+    }
+}
+
+fun interface CellAssertion {
+    fun assertCell(cellStyle: Cell, message: String)
+
+    abstract class CellAssertionRouter : CellAssertion {
+        abstract fun assertXSSFCell(cell: XSSFCell, message: String)
+        override fun assertCell(cell: Cell, message: String) {
+            when (cell) {
+                is XSSFCell -> {
+                    assertXSSFCell(cell, message)
+                }
+                else -> {
+                    fail("unknown cell format $cell")
+                }
+            }
+        }
+    }
+
+    class CellTypeAssertion(private val type: CellType) : CellAssertionRouter() {
+        override fun assertXSSFCell(cell: XSSFCell, message: String) {
+            val actual = cell.cellType
+            assertEquals(type, actual, "wrong cell type: $message")
+        }
     }
 }
 

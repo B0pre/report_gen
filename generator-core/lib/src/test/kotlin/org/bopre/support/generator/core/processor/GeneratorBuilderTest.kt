@@ -1,6 +1,7 @@
 package org.bopre.support.generator.core.processor
 
 import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.xssf.usermodel.XSSFFont
@@ -16,18 +17,21 @@ import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.PoiDocumentRenderer
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
-import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellFontSettingsAssertion.AssertFontType
-import org.bopre.support.generator.core.testutils.xls.GenericCell
-import org.bopre.support.generator.core.testutils.xls.assertCellStyles
-import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.sql.Timestamp
+import java.time.Instant
+import java.time.LocalDate
+import java.util.*
 import java.util.stream.Stream
 import kotlin.test.assertTrue
 
@@ -168,6 +172,22 @@ class GeneratorBuilderTest {
                 )
             )
         }
+
+        @JvmStatic
+        fun typesTestCases(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(Named.of("int number", 0), CellType.NUMERIC),
+                Arguments.of(Named.of("bigdecimal number", BigDecimal.valueOf(0)), CellType.NUMERIC),
+                Arguments.of(Named.of("biginteger number", BigInteger.valueOf(0)), CellType.NUMERIC),
+                Arguments.of(Named.of("double number", 0.0), CellType.NUMERIC),
+                Arguments.of(Named.of("float number", 0.0f), CellType.NUMERIC),
+                Arguments.of(Named.of("date", Date()), CellType.NUMERIC),
+                Arguments.of(Named.of("timestamp", Timestamp.from(Instant.now())), CellType.NUMERIC),
+                Arguments.of(Named.of("localdate", LocalDate.now()), CellType.NUMERIC),
+                Arguments.of(Named.of("string number", "0"), CellType.STRING),
+                Arguments.of(Named.of("string number", "sample text"), CellType.STRING)
+            )
+        }
     }
 
     @MethodSource(value = ["styleTestCases"])
@@ -205,6 +225,45 @@ class GeneratorBuilderTest {
 
         assertTrue(file.exists(), "file was not created")
         assertCellStyles(file, 0, assertions)
+    }
+
+    @MethodSource(value = ["typesTestCases"])
+    @ParameterizedTest(name = "{argumentsWithNames}")
+    fun `generic cell test`(value: Any, cellType: CellType) {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("column" to value))
+            )
+        )
+
+        val columns = listOf(
+            SimpleTableColumn(title = "column", id = "column")
+        )
+
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+        println("rendered $file")
+
+        assertTrue(file.exists(), "file was not created")
+        assertCells(
+            file, 0, listOf(
+                GenericCell(0, 0, CellAssertion.CellTypeAssertion(CellType.STRING)),
+                GenericCell(1, 0, CellAssertion.CellTypeAssertion(cellType))
+            )
+        )
     }
 
     @Test

@@ -16,7 +16,7 @@ class SimpleTableColumn(
 
     override fun getSettings(): CellSettings = style
 
-    override fun getValue(source: Line): String =
+    override fun getValue(source: Line): Any =
         source.getCell(id)
 
 }
