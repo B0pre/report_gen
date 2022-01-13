@@ -39,6 +39,20 @@ class GeneratorBuilderTest {
             return Stream.of(
                 Arguments.of(
                     Named.of(
+                        "data format text",
+                        listOf(
+                            CellSettings.create(
+                                dataFormat = "# ##0.00"
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(0, 0, CellDataFormatAssertion("General")),
+                        GenericCell(1, 0, CellDataFormatAssertion("# ##0.00"))
+                    )
+                ),
+                Arguments.of(
+                    Named.of(
                         "wrap text",
                         listOf(
                             CellSettings.create(
@@ -166,9 +180,9 @@ class GeneratorBuilderTest {
         val sourceId = "source_id_01"
 
         val someSource = LineSource.static(
-            listOf(
-                Line.fromMap(mapOf("column" to "value"))
-            )
+            cellSettings.mapIndexed { index, elem ->
+                Line.fromMap(mapOf("column#$index" to "column value $index"))
+            }.toList()
         )
 
         val columns = cellSettings.mapIndexed { index, elem ->
@@ -187,6 +201,7 @@ class GeneratorBuilderTest {
             .build(RenderProperties.empty())
 
         renderer.renderToFile(file)
+        println("rendered $file")
 
         assertTrue(file.exists(), "file was not created")
         assertCellStyles(file, 0, assertions)

@@ -80,6 +80,10 @@ class TableHandler : ContentHandler {
         settings.getFontName()?.let {
             newFont.fontName = it
         }
+        settings.getDataFormat()?.let {
+            val format = workbook.createDataFormat()
+            newStyle.dataFormat = format.getFormat(it)
+        }
         newStyle.setFont(newFont)
         return newStyle
     }

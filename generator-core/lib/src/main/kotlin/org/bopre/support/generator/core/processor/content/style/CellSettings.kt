@@ -15,6 +15,7 @@ interface CellSettings {
         private var isItalic: Boolean? = null
         private var isStrikeout: Boolean? = null
         private var font: String? = null
+        private var dataFormat: String? = null
 
         fun height(height: Short): CellSettingsBuilder {
             this.height = height
@@ -61,6 +62,11 @@ interface CellSettings {
             return this
         }
 
+        fun dataFormat(dataFormat: String) : CellSettingsBuilder {
+            this.dataFormat = dataFormat
+            return this
+        }
+
         fun build(): CellSettings =
             object : CellSettings {
                 override fun getHeightInPoints(): Short? = height
@@ -72,6 +78,7 @@ interface CellSettings {
                 override fun getItalic(): Boolean? = isItalic
                 override fun getStrikeout(): Boolean? = isStrikeout
                 override fun getFontName(): String? = font
+                override fun getDataFormat(): String? = dataFormat
             }
     }
 
@@ -85,7 +92,8 @@ interface CellSettings {
             isBold: Boolean? = null,
             isItalic: Boolean? = null,
             isStrikeout: Boolean? = null,
-            font: String? = null
+            font: String? = null,
+            dataFormat: String? = null
         ): CellSettings {
             return object : CellSettings {
                 override fun getHeightInPoints(): Short? = height
@@ -97,6 +105,7 @@ interface CellSettings {
                 override fun getItalic(): Boolean? = isItalic
                 override fun getStrikeout(): Boolean? = isStrikeout
                 override fun getFontName(): String? = font
+                override fun getDataFormat(): String? = dataFormat
             }
         }
 
@@ -111,6 +120,7 @@ interface CellSettings {
                 override fun getItalic(): Boolean? = null
                 override fun getStrikeout(): Boolean? = null
                 override fun getFontName(): String? = null
+                override fun getDataFormat(): String? = null
             }
         }
 
@@ -130,4 +140,7 @@ interface CellSettings {
     fun getStrikeout(): Boolean?
 
     fun getFontName(): String?
+
+    fun getDataFormat(): String?
+
 }

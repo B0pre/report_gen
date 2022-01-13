@@ -106,6 +106,13 @@ fun interface CellStyleAssertion {
         }
     }
 
+    class CellDataFormatAssertion(private val dataFormat: String) : CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            val actual = cellStyle.dataFormatString
+            assertEquals(dataFormat, actual, "wrong data format setting: $message")
+        }
+    }
+
     class CellIsWrappedAssertion(private val isWrapped: Boolean) : CellStyleAssertionRouter() {
         override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
             assertEquals(isWrapped, cellStyle.wrapText, "wrong wrapping setting: $message")
