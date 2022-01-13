@@ -54,27 +54,23 @@ class TableHandler : ContentHandler {
     }
 
     private fun Cell.setCellValueGeneric(value: Any) {
-        if (value is String) {
-            this.setCellValue(value)
-            return
+        when (value) {
+            is String -> this.setCellValue(value)
+            is Number -> this.setCellValue(value.toDouble())
+            is Date -> {
+                val helper = this.sheet.workbook.creationHelper
+                this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
+                this.setCellValue(value)
+            }
+            is LocalDate -> {
+                val helper = this.sheet.workbook.creationHelper
+                this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
+                this.setCellValue(value)
+            }
+            else -> {
+                this.setCellValue(value.toString())
+            }
         }
-        if (value is Number) {
-            this.setCellValue(value.toDouble())
-            return
-        }
-        if (value is Date) {
-            val helper = this.sheet.workbook.creationHelper
-            this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
-            this.setCellValue(value)
-            return
-        }
-        if (value is LocalDate) {
-            val helper = this.sheet.workbook.creationHelper
-            this.cellStyle.dataFormat = helper.createDataFormat().getFormat(DEFAULT_DATE_FORMAT)
-            this.setCellValue(value)
-            return
-        }
-        this.setCellValue(value.toString())
     }
 
     override fun supports(content: Content): Boolean {
