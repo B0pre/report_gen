@@ -1,16 +1,16 @@
 package org.bopre.support.generator.core.yaml
 
 import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
-import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generator
 import org.bopre.support.generator.core.processor.render.GeneratorTemplate
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
-import org.bopre.support.generator.core.yaml.data.SourceDefinition
 
 class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfigurer {
+
+    val sourConfigurer: SourceConfigurer = SourceConfigurer()
 
     override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
@@ -21,15 +21,9 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
             builder.appendSheet(sheet)
         }
         for (sourceDef in parsedDocument.sources) {
-            if (sourceDef is SourceDefinition.StaticSourceDefinition) {
-                val source = LineSource.static(
-                    sourceDef.lines.map { Line.fromMap(it) }.toList()
-                )
+            val source = sourConfigurer.configureSource(sourceDef, externalSources)
+            if (source != null)
                 builder.externalSource(sourceDef.id, source)
-            }
-            if (sourceDef is SourceDefinition.ExternalSourceDefinition) {
-                externalSources[sourceDef.name]?.let { builder.externalSource(sourceDef.id, it) };
-            }
         }
         return object : GeneratorTemplate {
             override fun instance(params: Map<String, Any>): ConfigurableTemplate.Result<Generator> {

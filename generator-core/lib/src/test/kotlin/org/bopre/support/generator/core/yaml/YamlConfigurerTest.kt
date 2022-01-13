@@ -196,6 +196,69 @@ class YamlConfigurerTest {
     }
 
     @Test
+    fun `yaml config with dynamic source fields`() {
+        val document = Document(
+            docname = "sample",
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report number 0",
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
+                            id = "table1",
+                            title = "table1 for report 0",
+                            sourceId = "source_01",
+                            columns = listOf(
+                                CellParameters(
+                                    id = "id", title = "identifier"
+                                ),
+                                CellParameters(
+                                    id = "username", title = "username"
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            sources = listOf(
+                SourceDefinition.static(
+                    "source_01",
+                    listOf(
+                        mapOf("id" to "01", "username" to "\${users.user01}"),
+                        mapOf("id" to "02", "username" to "\${users.user02}"),
+                        mapOf("id" to "admin", "username" to "root")
+                    )
+                )
+            )
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val props = mapOf(
+            "users.user01" to "name of user 01",
+            "users.user02" to "name of user 02"
+        )
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance(props) as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+
+        assertTrue(file.exists(), "file was not created")
+        assertSheetInFile(
+            file, 0, arrayOf(
+                arrayOf("identifier", "username"),
+                arrayOf("01", "name of user 01"),
+                arrayOf("02", "name of user 02"),
+                arrayOf("admin", "root")
+            )
+        )
+    }
+
+    @Test
     fun `yaml config cell with borders`() {
         val document = Document(
             docname = "sample",
