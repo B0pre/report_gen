@@ -14,6 +14,7 @@ interface CellSettings {
         private var isBold: Boolean? = null
         private var isItalic: Boolean? = null
         private var isStrikeout: Boolean? = null
+        private var font: String? = null
 
         fun height(height: Short): CellSettingsBuilder {
             this.height = height
@@ -65,6 +66,7 @@ interface CellSettings {
                 override fun getBold(): Boolean? = isBold
                 override fun getItalic(): Boolean? = isItalic
                 override fun getStrikeout(): Boolean? = isStrikeout
+                override fun getFontName(): String? = font
             }
     }
 
@@ -77,7 +79,8 @@ interface CellSettings {
             horizontalAlignment: HorizontalAlignment? = null,
             isBold: Boolean? = null,
             isItalic: Boolean? = null,
-            isStrikeout: Boolean? = null
+            isStrikeout: Boolean? = null,
+            font: String? = null
         ): CellSettings {
             return object : CellSettings {
                 override fun getHeightInPoints(): Short? = height
@@ -88,6 +91,7 @@ interface CellSettings {
                 override fun getBold(): Boolean? = isBold
                 override fun getItalic(): Boolean? = isItalic
                 override fun getStrikeout(): Boolean? = isStrikeout
+                override fun getFontName(): String? = font
             }
         }
 
@@ -101,6 +105,7 @@ interface CellSettings {
                 override fun getBold(): Boolean? = null
                 override fun getItalic(): Boolean? = null
                 override fun getStrikeout(): Boolean? = null
+                override fun getFontName(): String? = null
             }
         }
 
@@ -119,4 +124,5 @@ interface CellSettings {
     fun getItalic(): Boolean?
     fun getStrikeout(): Boolean?
 
+    fun getFontName(): String?
 }

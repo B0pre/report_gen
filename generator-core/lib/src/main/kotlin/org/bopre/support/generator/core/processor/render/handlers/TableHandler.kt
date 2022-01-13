@@ -77,6 +77,9 @@ class TableHandler : ContentHandler {
         settings.getStrikeout()?.let {
             newFont.strikeout = it
         }
+        settings.getFontName()?.let {
+            newFont.fontName = it
+        }
         newStyle.setFont(newFont)
         return newStyle
     }

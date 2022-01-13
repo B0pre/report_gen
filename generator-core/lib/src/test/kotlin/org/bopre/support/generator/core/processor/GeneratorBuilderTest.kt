@@ -134,6 +134,23 @@ class GeneratorBuilderTest {
                             1, 0, CellStyleAssertion.CellBordersAssertion(BorderLocation.TOP, BorderStyle.MEDIUM)
                         )
                     )
+                ),
+                Arguments.of(
+                    Named.of(
+                        "font name test case", listOf(
+                            CellSettings.create(
+                                font = "Arial"
+                            )
+                        )
+                    ),
+                    listOf(
+                        GenericCell(
+                            0,
+                            0,
+                            CellStyleAssertion.CellFontNameAlignmentAssertion(XSSFFont.DEFAULT_FONT_NAME)
+                        ),
+                        GenericCell(1, 0, CellStyleAssertion.CellFontNameAlignmentAssertion("Arial"))
+                    )
                 )
             )
         }

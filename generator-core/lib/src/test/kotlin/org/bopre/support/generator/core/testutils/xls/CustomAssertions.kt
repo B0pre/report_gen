@@ -61,6 +61,27 @@ fun interface CellStyleAssertion {
         }
     }
 
+    class CellFontNameAlignmentAssertion(
+        private val fontName: String,
+        private val ignoreCase: Boolean = true
+    ) :
+        CellStyleAssertionRouter() {
+        override fun assertXSSFCell(cellStyle: XSSFCellStyle, message: String) {
+            val expected: String = toLowerIf(fontName, ignoreCase)
+            val font = cellStyle.font
+            assertNotNull(cellStyle.font, "font was null")
+
+            val actual: String = toLowerIf(font.fontName, ignoreCase)
+            assertEquals(expected, actual, "wrong font: $message")
+        }
+
+        private fun toLowerIf(value: String, condition: Boolean): String {
+            if (value == null || !condition)
+                return ""
+            return value.lowercase()
+        }
+    }
+
     class CellFontSettingsAssertion(
         private val assertType: AssertFontType,
         private val isOf: Boolean
