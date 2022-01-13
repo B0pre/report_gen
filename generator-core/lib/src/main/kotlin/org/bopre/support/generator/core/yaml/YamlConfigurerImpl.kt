@@ -16,8 +16,14 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
     override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
         val builder = PoiDocumentRendererBuilder()
+
+        val styles = parsedDocument.styles
+            .map { (it.id ?: "") to it }
+            .filter { !it.first.isBlank() }
+            .toMap()
+
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
-            val contents = sheetDef.content.map { contentConfigurer.configureContent(it) }.toList()
+            val contents = sheetDef.content.map { contentConfigurer.configureContent(it, styles) }.toList()
             val sheet = SimpleSheet(title = "$index", contents)
             builder.appendSheet(sheet)
         }

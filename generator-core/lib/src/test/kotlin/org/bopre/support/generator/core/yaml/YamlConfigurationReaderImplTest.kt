@@ -106,6 +106,18 @@ class YamlConfigurationReaderImplTest {
 
         val expected = Document(
             docname = "sample document",
+            styles = listOf(
+                StyleDefinition(
+                    id = "style_main",
+                    fontSize = 11,
+                    font = "Arial"
+                ),
+                StyleDefinition(
+                    id = "additional_big",
+                    fontSize = 20,
+                    font = "Arial"
+                )
+            ),
             sheets = listOf(
                 DocumentSheet(
                     id = "report_0",
@@ -116,7 +128,11 @@ class YamlConfigurationReaderImplTest {
                             title = "table1 for report 0",
                             sourceId = "source_01",
                             columns = listOf(
-                                CellParameters(id = "id", title = "identifier"),
+                                CellParameters(
+                                    id = "id",
+                                    title = "identifier",
+                                    style = StyleUsage.DefinedStyle("style_main")
+                                ),
                                 CellParameters(id = "name", title = "username")
                             )
                         ),
@@ -127,22 +143,25 @@ class YamlConfigurationReaderImplTest {
                             sourceId = "source_02",
                             columns = listOf(
                                 CellParameters(
-                                    id = "id", title = "identifier", style = StyleDefinition(
-                                        fontSize = 20,
-                                        font = "Arial",
-                                        borders = CellBordersYaml(
-                                            left = BorderStyle.THIN,
-                                            right = BorderStyle.NONE,
-                                            top = BorderStyle.MEDIUM,
-                                            bottom = BorderStyle.NONE
-                                        ),
-                                        alignV = VerticalAlignment.CENTER,
-                                        alignH = HorizontalAlignment.CENTER,
-                                        wrapped = true,
-                                        bold = true,
-                                        italic = true,
-                                        strikeout = true,
-                                        format = "0.00"
+                                    id = "id", title = "identifier", style =
+                                    StyleUsage.InlineStyle(
+                                        StyleDefinition(
+                                            fontSize = 20,
+                                            font = "Arial",
+                                            borders = CellBordersYaml(
+                                                left = BorderStyle.THIN,
+                                                right = BorderStyle.NONE,
+                                                top = BorderStyle.MEDIUM,
+                                                bottom = BorderStyle.NONE
+                                            ),
+                                            alignV = VerticalAlignment.CENTER,
+                                            alignH = HorizontalAlignment.CENTER,
+                                            wrapped = true,
+                                            bold = true,
+                                            italic = true,
+                                            strikeout = true,
+                                            format = "0.00"
+                                        )
                                     )
                                 ),
                                 CellParameters(id = "name", title = "username")

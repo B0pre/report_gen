@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment
 
 @Serializable
 data class StyleDefinition(
+    val id: String? = null,
+
     val fontSize: Short? = null,
     val font: String? = null,
 

@@ -161,7 +161,11 @@ class YamlConfigurerTest {
                             title = "table1 for report 0",
                             sourceId = "source_01",
                             columns = listOf(
-                                CellParameters(id = "id", title = "identifier", style = StyleDefinition(20))
+                                CellParameters(
+                                    id = "id",
+                                    title = "identifier",
+                                    style = StyleUsage.InlineStyle(StyleDefinition(fontSize = 20))
+                                )
                             )
                         )
                     )
@@ -273,22 +277,24 @@ class YamlConfigurerTest {
                             sourceId = "source_01",
                             columns = listOf(
                                 CellParameters(
-                                    id = "id", title = "identifier", style = StyleDefinition(
-                                        fontSize = 20,
-                                        font = "Times New Roman",
-                                        borders = CellBordersYaml(
-                                            left = BorderStyle.HAIR,
-                                            right = BorderStyle.MEDIUM,
-                                            top = BorderStyle.MEDIUM_DASHED,
-                                            bottom = BorderStyle.THIN
-                                        ),
-                                        alignV = VerticalAlignment.CENTER,
-                                        alignH = HorizontalAlignment.CENTER,
-                                        wrapped = true,
-                                        bold = true,
-                                        italic = true,
-                                        strikeout = true,
-                                        format = "0.00"
+                                    id = "id", title = "identifier", style = StyleUsage.InlineStyle(
+                                        StyleDefinition(
+                                            fontSize = 20,
+                                            font = "Times New Roman",
+                                            borders = CellBordersYaml(
+                                                left = BorderStyle.HAIR,
+                                                right = BorderStyle.MEDIUM,
+                                                top = BorderStyle.MEDIUM_DASHED,
+                                                bottom = BorderStyle.THIN
+                                            ),
+                                            alignV = VerticalAlignment.CENTER,
+                                            alignH = HorizontalAlignment.CENTER,
+                                            wrapped = true,
+                                            bold = true,
+                                            italic = true,
+                                            strikeout = true,
+                                            format = "0.00"
+                                        )
                                     )
                                 )
                             )
@@ -339,6 +345,66 @@ class YamlConfigurerTest {
                 GenericCell(1, 0, CellFontNameAlignmentAssertion("Times New Roman")),
 
                 GenericCell(1, 0, CellDataFormatAssertion("0.00")),
+            )
+        )
+    }
+
+    @Test
+    fun `yaml config cell defining styles`() {
+        val document = Document(
+            docname = "sample",
+            styles = listOf(
+                StyleDefinition(
+                    id = "additional_style",
+                    fontSize = 20,
+                    font = "Times New Roman",
+                )
+            ),
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report number 0",
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
+                            id = "table1",
+                            title = "table1 for report 0",
+                            sourceId = "source_01",
+                            columns = listOf(
+                                CellParameters(
+                                    id = "id", title = "identifier", style = StyleUsage.DefinedStyle(
+                                        id = "additional_style"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            sources = listOf(
+                SourceDefinition.static(
+                    "source_01",
+                    listOf(
+                        mapOf("id" to "01"),
+                    )
+                )
+            )
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertCellStyles(
+            file, 0, listOf(
+                GenericCell(1, 0, CellFontNameAlignmentAssertion("Times New Roman")),
+                GenericCell(1, 0, CellFontHeightAssertion(20)),
             )
         )
     }

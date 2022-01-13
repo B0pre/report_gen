@@ -9,57 +9,75 @@ import org.bopre.support.generator.core.processor.content.style.CellBorders
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.yaml.data.CellParameters
 import org.bopre.support.generator.core.yaml.data.ContentDefinition
+import org.bopre.support.generator.core.yaml.data.StyleDefinition
+import org.bopre.support.generator.core.yaml.data.StyleUsage
 
 class ContentConfigurer {
 
-    fun configureContent(definition: ContentDefinition): Content {
+    fun configureContent(definition: ContentDefinition, styles: Map<String, StyleDefinition>): Content {
         return when (definition) {
             is ContentDefinition.TableDefinition ->
-                table(definition)
+                table(definition, styles)
             is ContentDefinition.Separator ->
                 separator(definition)
         }
     }
 
-    private fun table(tableDefinition: ContentDefinition.TableDefinition): Content =
+    private fun table(
+        tableDefinition: ContentDefinition.TableDefinition,
+        styles: Map<String, StyleDefinition>
+    ): Content =
         SimpleTableContent(
             sourceId = tableDefinition.sourceId,
             columns = tableDefinition.columns
-                .mapIndexed { index, cellParameters -> toColumn(cellParameters, index) }
+                .mapIndexed { index, cellParameters -> toColumn(cellParameters, index, styles) }
                 .toList()
         )
 
     private fun separator(separatorDefinition: ContentDefinition.Separator): Content =
         SimpleSeparatorContent(separatorDefinition.strength)
 
-    private fun toColumn(cell: CellParameters, index: Int): TableColumn {
+    private fun toColumn(
+        cell: CellParameters, index: Int,
+        styles: Map<String, StyleDefinition>
+    ): TableColumn {
         val colTitle = cell.title ?: "$index"
         val colId = cell.id ?: "$index"
         var cellSettingsBuilder = CellSettings.builder()
-        if (cell.style != null) {
+        val cellStyle = getCellStyle(cell, styles)
+        if (cellStyle != null) {
             val bordersBuilder = CellBorders.builder()
-            cell.style.borders?.left?.let { bordersBuilder.left(it) }
-            cell.style.borders?.right?.let { bordersBuilder.right(it) }
-            cell.style.borders?.top?.let { bordersBuilder.top(it) }
-            cell.style.borders?.bottom?.let { bordersBuilder.bottom(it) }
+            cellStyle.borders?.left?.let { bordersBuilder.left(it) }
+            cellStyle.borders?.right?.let { bordersBuilder.right(it) }
+            cellStyle.borders?.top?.let { bordersBuilder.top(it) }
+            cellStyle.borders?.bottom?.let { bordersBuilder.bottom(it) }
 
-            cell.style.fontSize?.let { cellSettingsBuilder.height(it) }
+            cellStyle.fontSize?.let { cellSettingsBuilder.height(it) }
 
-            cell.style.alignV?.let { cellSettingsBuilder.verticalAlignment(it) }
-            cell.style.alignH?.let { cellSettingsBuilder.horizontalAlignment(it) }
+            cellStyle.alignV?.let { cellSettingsBuilder.verticalAlignment(it) }
+            cellStyle.alignH?.let { cellSettingsBuilder.horizontalAlignment(it) }
 
-            cell.style.bold?.let { cellSettingsBuilder.isBold(it) }
-            cell.style.italic?.let { cellSettingsBuilder.isItalic(it) }
-            cell.style.strikeout?.let { cellSettingsBuilder.isStrikeout(it) }
+            cellStyle.bold?.let { cellSettingsBuilder.isBold(it) }
+            cellStyle.italic?.let { cellSettingsBuilder.isItalic(it) }
+            cellStyle.strikeout?.let { cellSettingsBuilder.isStrikeout(it) }
 
-            cell.style.wrapped?.let { cellSettingsBuilder.isWrapped(it) }
+            cellStyle.wrapped?.let { cellSettingsBuilder.isWrapped(it) }
 
-            cell.style.font?.let { cellSettingsBuilder.font(it) }
+            cellStyle.font?.let { cellSettingsBuilder.font(it) }
 
-            cell.style.format?.let { cellSettingsBuilder.dataFormat(it) }
+            cellStyle.format?.let { cellSettingsBuilder.dataFormat(it) }
 
             cellSettingsBuilder.borders(bordersBuilder.build())
         }
         return SimpleTableColumn(title = colTitle, id = colId, style = cellSettingsBuilder.build())
+    }
+
+    fun getCellStyle(cell: CellParameters, styles: Map<String, StyleDefinition>): StyleDefinition? {
+        val cellStyle = cell.style
+        return when (cellStyle) {
+            is StyleUsage.InlineStyle -> cellStyle.definition
+            is StyleUsage.DefinedStyle -> styles.get(cellStyle.id)
+            else -> null
+        }
     }
 }

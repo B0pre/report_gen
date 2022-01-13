@@ -1,4 +1,11 @@
 docname: sample document
+styles:
+  - id: style_main
+    fontSize: 11
+    font: Arial
+  - id: additional_big
+    fontSize: 20
+    font: Arial
 sheets:
   - id: report_0
     name: report number 0
@@ -10,6 +17,9 @@ sheets:
         columns:
           - id: id
             title: identifier
+            style:
+              type: defined
+              id: style_main
           - id: name
             title: username
       - type: separator
@@ -22,18 +32,20 @@ sheets:
           - id: id
             title: identifier
             style:
-              fontSize: 20
-              alignV: CENTER
-              alignH: CENTER
-              wrapped: true
-              bold: true
-              italic: true
-              strikeout: true
-              borders:
-                left: THIN
-                top: MEDIUM
-              font: Arial
-              format: 0.00
+              type: inline
+              definition:
+                fontSize: 20
+                alignV: CENTER
+                alignH: CENTER
+                wrapped: true
+                bold: true
+                italic: true
+                strikeout: true
+                borders:
+                  left: THIN
+                  top: MEDIUM
+                font: Arial
+                format: 0.00
           - id: name
             title: username
 sources:
