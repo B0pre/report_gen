@@ -11,12 +11,13 @@ import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuil
 class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfigurer {
 
     val sourConfigurer: SourceConfigurer = SourceConfigurer()
+    val contentConfigurer: ContentConfigurer = ContentConfigurer()
 
     override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
         val builder = PoiDocumentRendererBuilder()
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
-            val contents = sheetDef.content.map { it.toContent() }.toList()
+            val contents = sheetDef.content.map { contentConfigurer.configureContent(it) }.toList()
             val sheet = SimpleSheet(title = "$index", contents)
             builder.appendSheet(sheet)
         }
