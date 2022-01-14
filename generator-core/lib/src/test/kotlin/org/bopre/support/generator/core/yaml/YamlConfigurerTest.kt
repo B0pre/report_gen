@@ -601,8 +601,8 @@ class YamlConfigurerTest {
                 ),
                 //====
                 Arguments.of(
-                    Named.of("documentWithDefinedSheetStyle", documentWithDefinedSheetStyle()),
-                    "documentWithDefinedSheetStyle",
+                    Named.of("documentWithDefinedSheetHeaderStyle", documentWithDefinedSheetHeaderStyle()),
+                    "documentWithDefinedSheetHeaderStyle",
                     listOf { file: File ->
                         {
                             assertCellStyles(
@@ -616,8 +616,8 @@ class YamlConfigurerTest {
                 ),
                 //====
                 Arguments.of(
-                    Named.of("documentWithDefinedTableStyle", documentWithDefinedTableStyle()),
-                    "documentWithDefinedTableStyle",
+                    Named.of("documentWithDefinedTableHeaderStyle", documentWithDefinedTableHeaderStyle()),
+                    "documentWithDefinedTableHeaderStyle",
                     listOf { file: File ->
                         {
                             assertCellStyles(
@@ -625,6 +625,51 @@ class YamlConfigurerTest {
                                 0,
                                 GenericCell(0, 0, CellFontHeightAssertion(15)), //table default
                                 GenericCell(0, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithGlobalCellStyle", documentWithGlobalCellStyle()),
+                    "documentWithGlobalCellStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(1, 0, CellFontHeightAssertion(9)), //document default
+                                GenericCell(1, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithDefinedSheetCellStyle", documentWithDefinedSheetCellStyle()),
+                    "documentWithDefinedSheetCellStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(1, 0, CellFontHeightAssertion(13)), //sheet default
+                                GenericCell(1, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithDefinedTableCellStyle", documentWithDefinedTableCellStyle()),
+                    "documentWithDefinedTableCellStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(1, 0, CellFontHeightAssertion(15)), //table default
+                                GenericCell(1, 1, CellFontHeightAssertion(20)) //column own style
                             )
                         }
                     }

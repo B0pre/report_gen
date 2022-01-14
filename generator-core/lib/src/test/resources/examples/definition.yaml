@@ -10,14 +10,23 @@ globalSettings:
   headerStyle:
     type: defined
     id: style_main
+  style:
+    type: defined
+    id: style_main
 sheets:
   - id: report_0
     name: report number 0
+    style:
+      type: defined
+      id: style_main
     headerStyle:
       type: defined
       id: style_main
     content:
       - type: table
+        style:
+          type: defined
+          id: style_main
         headerStyle:
           type: defined
           id: style_main

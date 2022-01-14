@@ -11,7 +11,8 @@ import java.util.*
 class StyleRegister {
 
     enum class StyleScope {
-        HEADER
+        HEADER,
+        BODY
     }
 
     //registered styles (styleId <-> definition)

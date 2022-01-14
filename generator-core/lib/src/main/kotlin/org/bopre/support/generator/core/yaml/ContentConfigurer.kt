@@ -32,6 +32,7 @@ class ContentConfigurer {
 
         //push table`s style to stack
         styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, tableDefinition.headerStyle)
+        styleRegister.pushIfNotNull(StyleRegister.StyleScope.BODY, tableDefinition.style)
         val content = SimpleTableContent(
             sourceId = tableDefinition.sourceId,
             shifts = prepareShifts(tableDefinition.shift),
@@ -43,6 +44,7 @@ class ContentConfigurer {
 
         //remove table`s style from stack
         styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, tableDefinition.headerStyle)
+        styleRegister.popIfNotNull(StyleRegister.StyleScope.BODY, tableDefinition.style)
         return content
     }
 
@@ -66,7 +68,9 @@ class ContentConfigurer {
             title = colTitle,
             id = colId
         )
-        val styleId = styleRegister.getCellStyleId(cell.style)
+
+        //define cell`s style
+        val styleId = styleRegister.getCellStyleId(StyleRegister.StyleScope.BODY, cell.style)
         if (styleId != null)
             columnBuilder.styleId(styleId)
 

@@ -107,6 +107,7 @@ class YamlConfigurationReaderImplTest {
         val expected = Document(
             docname = "sample document",
             globalSettings = GlobalDocumentSettings(
+                style = StyleUsage.DefinedStyle("style_main"),
                 headerStyle = StyleUsage.DefinedStyle("style_main")
             ),
             styles = listOf(
@@ -125,10 +126,12 @@ class YamlConfigurationReaderImplTest {
                 DocumentSheet(
                     id = "report_0",
                     name = "report number 0",
+                    style = StyleUsage.DefinedStyle("style_main"),
                     headerStyle = StyleUsage.DefinedStyle("style_main"),
                     content = listOf(
                         ContentDefinition.TableDefinition(
                             id = "table1",
+                            style = StyleUsage.DefinedStyle("style_main"),
                             headerStyle = StyleUsage.DefinedStyle("style_main"),
                             title = "table1 for report 0",
                             sourceId = "source_01",

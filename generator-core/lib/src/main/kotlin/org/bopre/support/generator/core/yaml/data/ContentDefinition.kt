@@ -11,6 +11,7 @@ sealed class ContentDefinition {
         val id: String,
         val title: String?,
         val sourceId: String,
+        val style: StyleUsage? = null,
         val headerStyle: StyleUsage? = null,
         val shift: ShiftDefinition? = null,
         val showHeader: Boolean = true,

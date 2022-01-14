@@ -31,11 +31,13 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
 
         //push document global style to stack
         styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, parsedDocument.globalSettings?.headerStyle)
+        styleRegister.pushIfNotNull(StyleRegister.StyleScope.BODY, parsedDocument.globalSettings?.style)
 
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
 
             //push sheet`s style to stack
             styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, sheetDef.headerStyle)
+            styleRegister.pushIfNotNull(StyleRegister.StyleScope.BODY, sheetDef.style)
             val contents =
                 sheetDef.content.map {
                     contentConfigurer.configureContent(it, styleRegister)
@@ -46,10 +48,12 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
 
             //remove sheet`s style from stack
             styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, sheetDef.headerStyle)
+            styleRegister.popIfNotNull(StyleRegister.StyleScope.BODY, sheetDef.style)
         }
 
         //remove document`s global style
         styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, parsedDocument.globalSettings?.headerStyle)
+        styleRegister.popIfNotNull(StyleRegister.StyleScope.BODY, parsedDocument.globalSettings?.style)
 
         //register styles to builder
         styleRegister.getRegistered().forEach {
