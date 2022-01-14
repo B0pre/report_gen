@@ -33,15 +33,18 @@ class TableHandler : ContentHandler {
             sheet.createRow(currentRowNum++)
 
         //render header
-        val header = sheet.createRow(currentRowNum++)
-        var columnNum = 0
-        //skip cells for left shift(header)
-        for (i in 0 until shifts.getShiftLeft())
-            header.createCell(columnNum++)
-        for (column in content.getColumns()) {
-            val cell = header.createCell(columnNum++)
-            cell.setCellValue(column.getTitle())
+        if (content.showHeader()) {
+            val header = sheet.createRow(currentRowNum++)
+            var columnNum = 0
+            //skip cells for left shift(header)
+            for (i in 0 until shifts.getShiftLeft())
+                header.createCell(columnNum++)
+            for (column in content.getColumns()) {
+                val cell = header.createCell(columnNum++)
+                cell.setCellValue(column.getTitle())
+            }
         }
+
         val sourceId = content.getSourceId()
         var lineSource: LineSource = settings.getSource(sourceId)
 

@@ -394,4 +394,45 @@ class GeneratorBuilderTest {
         )
     }
 
+    @Test
+    fun `test table hide header`() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("col0" to "1", "col1" to "2")),
+                Line.fromMap(mapOf("col0" to "3", "col1" to "4")),
+                Line.fromMap(mapOf("col0" to "5", "col1" to "6"))
+            )
+        )
+
+        val columns = listOf(
+            SimpleTableColumn(title = "col0", id = "col0"),
+            SimpleTableColumn(title = "col1", id = "col1")
+        )
+
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId, showHeader = false),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertSheetInFile(
+            file, 0, arrayOf(
+                arrayOf("1", "2"),
+                arrayOf("3", "4"),
+                arrayOf("5", "6"),
+            )
+        )
+    }
+
 }
