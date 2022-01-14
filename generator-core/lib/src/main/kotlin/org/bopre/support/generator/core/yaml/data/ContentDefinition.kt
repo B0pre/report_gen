@@ -12,6 +12,7 @@ sealed class ContentDefinition {
         val title: String?,
         val sourceId: String,
         val shift: ShiftDefinition? = null,
+        val showHeader: Boolean = true,
         val columns: List<CellParameters> = emptyList()
     ) : ContentDefinition()
 

@@ -34,6 +34,7 @@ class ContentConfigurer {
         SimpleTableContent(
             sourceId = tableDefinition.sourceId,
             shifts = prepareShifts(tableDefinition.shift),
+            showHeader = tableDefinition.showHeader,
             columns = tableDefinition.columns
                 .mapIndexed { index, cellParameters -> toColumn(cellParameters, index, styleRegister) }
                 .toList()

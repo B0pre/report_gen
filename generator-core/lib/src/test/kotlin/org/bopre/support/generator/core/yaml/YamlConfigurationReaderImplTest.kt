@@ -128,6 +128,7 @@ class YamlConfigurationReaderImplTest {
                             title = "table1 for report 0",
                             sourceId = "source_01",
                             shift = ShiftDefinition(left = 2, top = 4),
+                            showHeader = false,
                             columns = listOf(
                                 CellParameters(
                                     id = "id",
@@ -142,6 +143,7 @@ class YamlConfigurationReaderImplTest {
                             id = "table2",
                             title = "table1 for report 0",
                             sourceId = "source_02",
+                            showHeader = true,
                             columns = listOf(
                                 CellParameters(
                                     id = "id", title = "identifier", style =

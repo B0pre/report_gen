@@ -14,6 +14,7 @@ sheets:
         sourceId: source_01
         id: table1
         title: table1 for report 0
+        showHeader: false
         columns:
           - id: id
             title: identifier
