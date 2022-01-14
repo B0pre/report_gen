@@ -21,7 +21,7 @@ fun assertSheetInFile(file: File, sheetId: Int, expectedSheetValues: Array<Array
             val actual = xlWs.getRow(x)
                 .getCell(y, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
                 .toString()
-            assertEquals(expected, actual, "wrong value at [$x:$y]")
+            assertEquals(expected, actual, "wrong value at [$x:$y] in $file")
         }
     }
 }

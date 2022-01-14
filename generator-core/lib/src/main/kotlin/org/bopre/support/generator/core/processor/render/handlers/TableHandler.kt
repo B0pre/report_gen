@@ -24,11 +24,20 @@ class TableHandler : ContentHandler {
         val rowStart = context.currentRow()
         val settings = context.getSettings()
         val properties = context.getProperties()
+        val shifts = content.getShifts()
 
         var currentRowNum = rowStart
+
+        //skip rows for top shift
+        for (i in 0 until shifts.getShiftTop())
+            sheet.createRow(currentRowNum++)
+
         //render header
         val header = sheet.createRow(currentRowNum++)
         var columnNum = 0
+        //skip cells for left shift(header)
+        for (i in 0 until shifts.getShiftLeft())
+            header.createCell(columnNum++)
         for (column in content.getColumns()) {
             val cell = header.createCell(columnNum++)
             cell.setCellValue(column.getTitle())
@@ -40,6 +49,11 @@ class TableHandler : ContentHandler {
         for (line in lineSource.start(properties)) {
             val bodyRow = sheet.createRow(currentRowNum++)
             var bodyColumnNum = 0
+
+            //skip cells for left shift (body)
+            for (i in 0 until shifts.getShiftLeft())
+                bodyRow.createCell(bodyColumnNum++)
+
             for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
                 val newStyle = context.getStyleResolver().resolve(column.getStyleId())

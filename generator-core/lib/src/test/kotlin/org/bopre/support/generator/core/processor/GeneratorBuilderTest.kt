@@ -6,10 +6,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.bopre.support.generator.core.processor.content.Content
-import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
-import org.bopre.support.generator.core.processor.content.impl.SimpleSheet
-import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
-import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
+import org.bopre.support.generator.core.processor.content.impl.*
 import org.bopre.support.generator.core.processor.content.style.CellBorders
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.Line
@@ -266,6 +263,51 @@ class GeneratorBuilderTest {
             file, 0, listOf(
                 GenericCell(0, 0, CellAssertion.CellTypeAssertion(CellType.STRING)),
                 GenericCell(1, 0, CellAssertion.CellTypeAssertion(cellType))
+            )
+        )
+    }
+
+    @Test
+    fun `test table shifts`() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("col0" to "1", "col1" to "2")),
+                Line.fromMap(mapOf("col0" to "3", "col1" to "4")),
+                Line.fromMap(mapOf("col0" to "5", "col1" to "6"))
+            )
+        )
+
+        val columns = listOf(
+            SimpleTableColumn(title = "col0", id = "col0"),
+            SimpleTableColumn(title = "col1", id = "col1")
+        )
+
+        val shifts = SimpleContentShifts(left = 1, top = 1)
+
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId, shifts),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertSheetInFile(
+            file, 0, arrayOf(
+                arrayOf("", "", ""),
+                arrayOf("", "col0", "col1"),
+                arrayOf("", "1", "2"),
+                arrayOf("", "3", "4"),
+                arrayOf("", "5", "6"),
             )
         )
     }
