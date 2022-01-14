@@ -435,4 +435,46 @@ class GeneratorBuilderTest {
         )
     }
 
+    @Test
+    fun `test table header style`() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val headerStyleId = "header style"
+        val headerStyle = CellSettings.create(
+            font = "Arial"
+        )
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("col0" to "1", "col1" to "2")),
+            )
+        )
+        val columns = listOf(
+            SimpleTableColumn(title = "col0", id = "col0", headerStyleId = headerStyleId),
+            SimpleTableColumn(title = "col1", id = "col1")
+        )
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .appendStyle(headerStyleId, headerStyle)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertCellStyles(
+            file, 0, listOf(
+                GenericCell(0, 0, CellFontNameAlignmentAssertion("Arial")),
+                GenericCell(0, 1, CellFontNameAlignmentAssertion(XSSFFont.DEFAULT_FONT_NAME)),
+                GenericCell(1, 0, CellFontNameAlignmentAssertion(XSSFFont.DEFAULT_FONT_NAME)),
+                GenericCell(1, 1, CellFontNameAlignmentAssertion(XSSFFont.DEFAULT_FONT_NAME))
+            )
+        )
+    }
+
 }

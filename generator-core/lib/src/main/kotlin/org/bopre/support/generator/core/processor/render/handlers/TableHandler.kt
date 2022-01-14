@@ -41,6 +41,9 @@ class TableHandler : ContentHandler {
                 header.createCell(columnNum++)
             for (column in content.getColumns()) {
                 val cell = header.createCell(columnNum++)
+                val newStyle = context.getStyleResolver().resolve(column.getHeaderStyleId())
+                if (newStyle != null)
+                    cell.setCellStyle(newStyle)
                 cell.setCellValue(column.getTitle())
             }
         }
