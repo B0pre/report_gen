@@ -1,12 +1,15 @@
 package org.bopre.support.generator.core.yaml
 
 import org.bopre.support.generator.core.processor.content.Content
+import org.bopre.support.generator.core.processor.content.ContentShifts
 import org.bopre.support.generator.core.processor.content.TableColumn
+import org.bopre.support.generator.core.processor.content.impl.SimpleContentShifts
 import org.bopre.support.generator.core.processor.content.impl.SimpleSeparatorContent
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableColumn
 import org.bopre.support.generator.core.processor.content.impl.SimpleTableContent
 import org.bopre.support.generator.core.yaml.data.CellParameters
 import org.bopre.support.generator.core.yaml.data.ContentDefinition
+import org.bopre.support.generator.core.yaml.data.ShiftDefinition
 import org.bopre.support.generator.core.yaml.data.StyleUsage
 import java.util.*
 
@@ -30,10 +33,17 @@ class ContentConfigurer {
     ): Content =
         SimpleTableContent(
             sourceId = tableDefinition.sourceId,
+            shifts = prepareShifts(tableDefinition.shift),
             columns = tableDefinition.columns
                 .mapIndexed { index, cellParameters -> toColumn(cellParameters, index, styleRegister) }
                 .toList()
         )
+
+    private fun prepareShifts(shiftDefinition: ShiftDefinition?): ContentShifts {
+        if (shiftDefinition == null)
+            return SimpleContentShifts.empty()
+        return SimpleContentShifts(left = shiftDefinition.left, top = shiftDefinition.top)
+    }
 
     private fun separator(separatorDefinition: ContentDefinition.Separator): Content =
         SimpleSeparatorContent(separatorDefinition.strength)

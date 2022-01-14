@@ -127,6 +127,7 @@ class YamlConfigurationReaderImplTest {
                             id = "table1",
                             title = "table1 for report 0",
                             sourceId = "source_01",
+                            shift = ShiftDefinition(left = 2, top = 4),
                             columns = listOf(
                                 CellParameters(
                                     id = "id",

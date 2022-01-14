@@ -22,6 +22,9 @@ sheets:
               id: style_main
           - id: name
             title: username
+        shift:
+          left: 2
+          top: 4
       - type: separator
         strength: 2
       - type: table

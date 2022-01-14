@@ -409,4 +409,58 @@ class YamlConfigurerTest {
         )
     }
 
+    @Test
+    fun `yaml config cell with shifts`() {
+        val document = Document(
+            docname = "sample",
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report number 0",
+                    content = listOf(
+                        ContentDefinition.TableDefinition(
+                            id = "table1",
+                            title = "table1 for report 0",
+                            sourceId = "source_01",
+                            shift = ShiftDefinition(2, 1),
+                            columns = listOf(
+                                CellParameters(
+                                    id = "id", title = "id"
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            sources = listOf(
+                SourceDefinition.static(
+                    "source_01",
+                    listOf(
+                        mapOf("id" to "01"),
+                    )
+                )
+            )
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertSheetInFile(
+            file, 0,
+            arrayOf(
+                arrayOf("", "", ""),
+                arrayOf("", "", "id"),
+                arrayOf("", "", "01")
+            )
+        )
+    }
+
 }
