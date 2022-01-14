@@ -206,7 +206,7 @@ class GeneratorBuilderTest {
         )
 
         val columns = cellSettings.mapIndexed { index, elem ->
-            SimpleTableColumn(title = "column#$index", id = "column#$index", style = elem)
+            SimpleTableColumn(title = "column#$index", id = "column#$index", styleId = "style#$index")
         }.toList()
 
         val contentsForSheet0: List<Content> = listOf(
@@ -215,13 +215,18 @@ class GeneratorBuilderTest {
 
         val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
 
-        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+        val renderBuilder = PoiDocumentRendererBuilder()
             .appendSheet(sheet0)
-            .externalSource(sourceId, someSource)
+            .externalSource(sourceId, someSource);
+
+        cellSettings.forEachIndexed() { index, elem ->
+            renderBuilder.appendStyle("style#$index", elem)
+        }
+
+        val renderer: PoiDocumentRenderer = renderBuilder
             .build(RenderProperties.empty())
 
         renderer.renderToFile(file)
-        println("rendered $file")
 
         assertTrue(file.exists(), "file was not created")
         assertCellStyles(file, 0, assertions)
@@ -255,7 +260,6 @@ class GeneratorBuilderTest {
             .build(RenderProperties.empty())
 
         renderer.renderToFile(file)
-        println("rendered $file")
 
         assertTrue(file.exists(), "file was not created")
         assertCells(

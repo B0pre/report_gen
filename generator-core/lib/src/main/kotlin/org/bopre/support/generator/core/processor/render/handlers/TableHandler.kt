@@ -1,12 +1,9 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
 import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.TableContent
-import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.RenderContext
 import java.time.LocalDate
@@ -45,7 +42,7 @@ class TableHandler : ContentHandler {
             var bodyColumnNum = 0
             for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
-                val newStyle = createStyle(sheet.workbook, column.getSettings())
+                val newStyle = context.getStyleResolver().resolve(column.getStyleId())
                 cell.setCellStyle(newStyle)
                 cell.setCellValueGeneric(column.getValue(line))
             }
@@ -75,45 +72,6 @@ class TableHandler : ContentHandler {
 
     override fun supports(content: Content): Boolean {
         return content is TableContent
-    }
-
-    private fun createStyle(workbook: XSSFWorkbook, settings: CellSettings): CellStyle {
-        val newStyle = workbook.createCellStyle()
-        val newFont = workbook.createFont()
-        settings.getHeightInPoints()?.let { newFont.fontHeightInPoints = it }
-        settings.getBorders()?.let {
-            newStyle.borderLeft = it.left
-            newStyle.borderRight = it.right
-            newStyle.borderTop = it.top
-            newStyle.borderBottom = it.bottom
-        }
-        settings.getIsWrapped()?.let {
-            newStyle.wrapText = it
-        }
-        settings.getHorizontalAlignment()?.let {
-            newStyle.alignment = it
-        }
-        settings.getVerticalAlignment()?.let {
-            newStyle.verticalAlignment = it
-        }
-        settings.getBold()?.let {
-            newFont.bold = it
-        }
-        settings.getItalic()?.let {
-            newFont.italic = it
-        }
-        settings.getStrikeout()?.let {
-            newFont.strikeout = it
-        }
-        settings.getFontName()?.let {
-            newFont.fontName = it
-        }
-        settings.getDataFormat()?.let {
-            val format = workbook.createDataFormat()
-            newStyle.dataFormat = format.getFormat(it)
-        }
-        newStyle.setFont(newFont)
-        return newStyle
     }
 
 }

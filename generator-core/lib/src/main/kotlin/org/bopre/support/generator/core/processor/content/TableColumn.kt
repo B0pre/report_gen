@@ -5,6 +5,6 @@ import org.bopre.support.generator.core.processor.data.Line
 
 interface TableColumn {
     fun getTitle(): String
-    fun getSettings(): CellSettings
+    fun getStyleId(): String
     fun getValue(source: Line): Any
 }

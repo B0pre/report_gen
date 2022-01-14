@@ -7,14 +7,14 @@ import org.bopre.support.generator.core.processor.data.Line
 class SimpleTableColumn(
     private val title: String,
     private val id: String,
-    private val style: CellSettings = CellSettings.empty()
+    private val styleId: String = ""
 ) : TableColumn {
 
     override fun getTitle(): String {
         return title
     }
 
-    override fun getSettings(): CellSettings = style
+    override fun getStyleId(): String = styleId
 
     override fun getValue(source: Line): Any =
         source.getCell(id)
