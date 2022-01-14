@@ -36,6 +36,10 @@ fun assertSheetInFile(file: File, sheetId: Int, expectedSheetValues: Array<Array
     }
 }
 
+fun assertCellStyles(file: File, sheetId: Int, vararg assertion: GenericCell<CellStyleAssertion>) {
+    assertCellStyles(file, sheetId, assertion.toList())
+}
+
 fun assertCellStyles(file: File, sheetId: Int, assertions: List<GenericCell<CellStyleAssertion>>) {
     val inputStream = FileInputStream(file)
     //Instantiate Excel workbook using existing file:
@@ -50,7 +54,7 @@ fun assertCellStyles(file: File, sheetId: Int, assertions: List<GenericCell<Cell
         val cell = xlWs.getRow(styleAssertion.row)
             .getCell(styleAssertion.col, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
             .toString()
-        styleAssertion.value.assertCell(actual, "($cell) [${styleAssertion.row}:${styleAssertion.col}]")
+        styleAssertion.value.assertCell(actual, "($cell) [${styleAssertion.row}:${styleAssertion.col}] in $file")
     }
 }
 

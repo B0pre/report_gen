@@ -19,7 +19,6 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
     override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
         val builder = PoiDocumentRendererBuilder()
-
         val styleRegister = StyleRegister()
 
         parsedDocument.styles
@@ -30,13 +29,27 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
                 }
             }
 
+        //push document global style to stack
+        styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, parsedDocument.globalSettings?.headerStyle)
+
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
+
+            //push sheet`s style to stack
+            styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, sheetDef.headerStyle)
             val contents =
-                sheetDef.content.map { contentConfigurer.configureContent(it, styleRegister) }.toList()
+                sheetDef.content.map {
+                    contentConfigurer.configureContent(it, styleRegister)
+                }.toList()
             val sheetName = sheetDef.name ?: "sheet#$index"
             val sheet = SimpleSheet(title = sheetName, contents)
             builder.appendSheet(sheet)
+
+            //remove sheet`s style from stack
+            styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, sheetDef.headerStyle)
         }
+
+        //remove document`s global style
+        styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, parsedDocument.globalSettings?.headerStyle)
 
         //register styles to builder
         styleRegister.getRegistered().forEach {

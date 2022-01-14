@@ -10,8 +10,6 @@ import org.bopre.support.generator.core.processor.content.impl.SimpleTableConten
 import org.bopre.support.generator.core.yaml.data.CellParameters
 import org.bopre.support.generator.core.yaml.data.ContentDefinition
 import org.bopre.support.generator.core.yaml.data.ShiftDefinition
-import org.bopre.support.generator.core.yaml.data.StyleUsage
-import java.util.*
 
 class ContentConfigurer {
 
@@ -30,8 +28,11 @@ class ContentConfigurer {
     private fun table(
         tableDefinition: ContentDefinition.TableDefinition,
         styleRegister: StyleRegister
-    ): Content =
-        SimpleTableContent(
+    ): Content {
+
+        //push table`s style to stack
+        styleRegister.pushIfNotNull(StyleRegister.StyleScope.HEADER, tableDefinition.headerStyle)
+        val content = SimpleTableContent(
             sourceId = tableDefinition.sourceId,
             shifts = prepareShifts(tableDefinition.shift),
             showHeader = tableDefinition.showHeader,
@@ -39,6 +40,11 @@ class ContentConfigurer {
                 .mapIndexed { index, cellParameters -> toColumn(cellParameters, index, styleRegister) }
                 .toList()
         )
+
+        //remove table`s style from stack
+        styleRegister.popIfNotNull(StyleRegister.StyleScope.HEADER, tableDefinition.headerStyle)
+        return content
+    }
 
     private fun prepareShifts(shiftDefinition: ShiftDefinition?): ContentShifts {
         if (shiftDefinition == null)
@@ -55,23 +61,21 @@ class ContentConfigurer {
     ): TableColumn {
         val colTitle = cell.title ?: "$index"
         val colId = cell.id ?: "$index"
-        val styleId = getCellStyleId(cell, styleRegister)
-        if (styleId != null)
-            return SimpleTableColumn(title = colTitle, id = colId, styleId = styleId)
-        return SimpleTableColumn(title = colTitle, id = colId)
-    }
 
-    private fun getCellStyleId(cell: CellParameters, register: StyleRegister): String? {
-        val cellStyle = cell.style
-        return when (cellStyle) {
-            is StyleUsage.InlineStyle -> {
-                val randomStyleId = UUID.randomUUID().toString()
-                register.register(randomStyleId, cellStyle.definition)
-                randomStyleId
-            }
-            is StyleUsage.DefinedStyle -> cellStyle.id
-            else -> null
-        }
+        val columnBuilder = SimpleTableColumn.SimpleTableColumnBuilder(
+            title = colTitle,
+            id = colId
+        )
+        val styleId = styleRegister.getCellStyleId(cell.style)
+        if (styleId != null)
+            columnBuilder.styleId(styleId)
+
+        //define header`s style
+        val headerStyleId = styleRegister.getCellStyleId(StyleRegister.StyleScope.HEADER, cell.headerStyle)
+        if (headerStyleId != null)
+            columnBuilder.headerStyleId(headerStyleId)
+
+        return columnBuilder.build()
     }
 
 }

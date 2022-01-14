@@ -21,4 +21,42 @@ class SimpleTableColumn(
     override fun getValue(source: Line): Any =
         source.getCell(id)
 
+
+    class SimpleTableColumnBuilder(
+        private var title: String,
+        private var id: String,
+        private var styleId: String = "",
+        private var headerStyleId: String = ""
+    ) {
+
+        fun title(title: String): SimpleTableColumnBuilder {
+            this.title = title
+            return this
+        }
+
+        fun id(id: String): SimpleTableColumnBuilder {
+            this.id = id
+            return this
+        }
+
+        fun styleId(styleId: String): SimpleTableColumnBuilder {
+            this.styleId = styleId
+            return this
+        }
+
+        fun headerStyleId(headerStyleId: String): SimpleTableColumnBuilder {
+            this.headerStyleId = headerStyleId
+            return this
+        }
+
+        fun build(): SimpleTableColumn {
+            return SimpleTableColumn(
+                title = title,
+                id = id,
+                styleId = styleId,
+                headerStyleId = headerStyleId
+            )
+        }
+    }
+
 }

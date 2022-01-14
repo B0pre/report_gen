@@ -13,8 +13,15 @@ import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBor
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellFontSettingsAssertion.AssertFontType
 import org.bopre.support.generator.core.yaml.data.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
+import java.io.File
+import java.util.stream.Stream
 import kotlin.test.assertTrue
 
 class YamlConfigurerTest {
@@ -548,6 +555,83 @@ class YamlConfigurerTest {
                 arrayOf("01")
             )
         )
+    }
+
+    @MethodSource(value = ["stylesTestCases"])
+    @ParameterizedTest(name = "{index}: {0}")
+    fun `yaml congig general style test`(
+        document: Document,
+        message: String,
+        executables: List<(file: File) -> () -> Unit>
+    ) {
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertAll(
+            message,
+            executables.map { it.invoke(file) }.toList()
+        );
+    }
+
+    companion object {
+        @JvmStatic
+        fun stylesTestCases(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(
+                    Named.of("documentWithGlobalHeaderStyle", documentWithGlobalHeaderStyle()),
+                    "documentWithGlobalHeaderStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(0, 0, CellFontHeightAssertion(9)), //document default
+                                GenericCell(0, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithDefinedSheetStyle", documentWithDefinedSheetStyle()),
+                    "documentWithDefinedSheetStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(0, 0, CellFontHeightAssertion(13)), //sheet default
+                                GenericCell(0, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithDefinedTableStyle", documentWithDefinedTableStyle()),
+                    "documentWithDefinedTableStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                GenericCell(0, 0, CellFontHeightAssertion(15)), //table default
+                                GenericCell(0, 1, CellFontHeightAssertion(20)) //column own style
+                            )
+                        }
+                    }
+                ),
+            )
+        }
+
     }
 
 }

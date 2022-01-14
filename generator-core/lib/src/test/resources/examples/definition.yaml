@@ -6,11 +6,21 @@ styles:
   - id: additional_big
     fontSize: 20
     font: Arial
+globalSettings:
+  headerStyle:
+    type: defined
+    id: style_main
 sheets:
   - id: report_0
     name: report number 0
+    headerStyle:
+      type: defined
+      id: style_main
     content:
       - type: table
+        headerStyle:
+          type: defined
+          id: style_main
         sourceId: source_01
         id: table1
         title: table1 for report 0
@@ -18,6 +28,9 @@ sheets:
         columns:
           - id: id
             title: identifier
+            headerStyle:
+              type: defined
+              id: style_main
             style:
               type: defined
               id: style_main

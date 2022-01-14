@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class DocumentSheet(
     val id: String?,
     val name: String? = null,
+    val headerStyle: StyleUsage? = null,
     val content: List<ContentDefinition> = emptyList()
 )
