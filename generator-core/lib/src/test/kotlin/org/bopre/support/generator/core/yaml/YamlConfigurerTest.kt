@@ -7,13 +7,10 @@ import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
 import org.bopre.support.generator.core.processor.render.Generator
-import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion
+import org.bopre.support.generator.core.testutils.xls.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.*
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellBordersAssertion.BorderLocation
 import org.bopre.support.generator.core.testutils.xls.CellStyleAssertion.CellFontSettingsAssertion.AssertFontType
-import org.bopre.support.generator.core.testutils.xls.GenericCell
-import org.bopre.support.generator.core.testutils.xls.assertCellStyles
-import org.bopre.support.generator.core.testutils.xls.assertSheetInFile
 import org.bopre.support.generator.core.yaml.data.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -461,6 +458,44 @@ class YamlConfigurerTest {
                 arrayOf("", "", "01")
             )
         )
+    }
+
+    @Test
+    fun `yaml config test sheet names`() {
+        val document = Document(
+            docname = "sample",
+            sheets = listOf(
+                DocumentSheet(
+                    id = "report_0",
+                    name = "report 0",
+                    content = emptyList()
+                ),
+                DocumentSheet(
+                    id = "report_1",
+                    name = "report 1",
+                    content = emptyList()
+                ),
+                DocumentSheet(
+                    id = "report_2",
+                    content = emptyList()
+                )
+            ),
+        )
+
+        val yamlContentStub = "some yaml content";
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        Mockito.`when`(configurationReader.readDocument(yamlContentStub))
+            .thenReturn(document)
+
+        val generator: Generator = (
+                configurer.configure(yamlContentStub)
+                    .instance() as ConfigurableTemplate.Result.Success
+                ).value;
+        generator.renderToFile(file);
+        assertTrue(file.exists(), "file was not created")
+        assertSheetNameInFile(file, 0, "report 0")
+        assertSheetNameInFile(file, 1, "report 1")
+        assertSheetNameInFile(file, 2, "sheet#2")
     }
 
 }

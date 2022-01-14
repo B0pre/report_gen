@@ -33,7 +33,8 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
         parsedDocument.sheets.forEachIndexed { index, sheetDef ->
             val contents =
                 sheetDef.content.map { contentConfigurer.configureContent(it, styleRegister) }.toList()
-            val sheet = SimpleSheet(title = "$index", contents)
+            val sheetName = sheetDef.name ?: "sheet#$index"
+            val sheet = SimpleSheet(title = sheetName, contents)
             builder.appendSheet(sheet)
         }
 

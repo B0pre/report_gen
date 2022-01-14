@@ -313,6 +313,34 @@ class GeneratorBuilderTest {
     }
 
     @Test
+    fun rightSheetName() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val emptySheetContent: List<Content> = listOf(
+            SimpleTableContent(emptyList(), sourceId)
+        )
+
+        val sheet0 = SimpleSheet("first sheet", emptySheetContent)
+        val sheet1 = SimpleSheet("second sheet", emptySheetContent)
+        val sheet2 = SimpleSheet("third sheet", emptySheetContent)
+
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .appendSheet(sheet1)
+            .appendSheet(sheet2)
+            .externalSource(sourceId, LineSource.static(emptyList()))
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertSheetNameInFile(file, 0, "first sheet")
+        assertSheetNameInFile(file, 1, "second sheet")
+        assertSheetNameInFile(file, 2, "third sheet")
+    }
+
+    @Test
     fun test() {
 
         val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()

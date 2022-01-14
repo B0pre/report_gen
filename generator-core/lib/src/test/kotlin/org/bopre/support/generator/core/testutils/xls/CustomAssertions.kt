@@ -9,6 +9,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
+fun assertSheetNameInFile(file: File, sheetId: Int, name: String) {
+    val inputStream = FileInputStream(file)
+    //Instantiate Excel workbook using existing file:
+    var xlWb = WorkbookFactory.create(inputStream)
+    val xlWs = xlWb.getSheetAt(sheetId)
+    val actual = xlWs.sheetName
+    assertEquals(name, actual, "wrong sheet[$sheetId] name in $file")
+}
+
 fun assertSheetInFile(file: File, sheetId: Int, expectedSheetValues: Array<Array<String>>) {
     val inputStream = FileInputStream(file)
     //Instantiate Excel workbook using existing file:
