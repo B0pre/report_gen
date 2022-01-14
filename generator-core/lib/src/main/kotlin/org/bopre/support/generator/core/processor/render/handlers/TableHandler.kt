@@ -57,7 +57,8 @@ class TableHandler : ContentHandler {
             for (column in content.getColumns()) {
                 val cell = bodyRow.createCell(bodyColumnNum++)
                 val newStyle = context.getStyleResolver().resolve(column.getStyleId())
-                cell.setCellStyle(newStyle)
+                if (newStyle != null)
+                    cell.setCellStyle(newStyle)
                 cell.setCellValueGeneric(column.getValue(line))
             }
         }
