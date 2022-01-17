@@ -7,7 +7,9 @@ class SimpleTableColumn(
     private val title: String,
     private val id: String,
     private val styleId: String = "",
-    private val headerStyleId: String = ""
+    private val headerStyleId: String = "",
+    private val width: Int? = null,
+    private val height: Int? = null
 ) : TableColumn {
 
     override fun getTitle(): String {
@@ -21,6 +23,9 @@ class SimpleTableColumn(
     override fun getValue(source: Line): Any =
         source.getCell(id)
 
+    override fun getWidth(): Int? = width
+
+    override fun getHeight(): Int? = height
 
     class SimpleTableColumnBuilder(
         private var title: String,

@@ -477,4 +477,39 @@ class GeneratorBuilderTest {
         )
     }
 
+    @Test
+    fun `test cell size`() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val sourceId = "source_id_01"
+
+        val headerStyleId = "header style"
+        val headerStyle = CellSettings.create(
+        )
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("col0" to "1", "col1" to "2")),
+            )
+        )
+        val columns = listOf(
+            SimpleTableColumn(title = "col0", id = "col0", headerStyleId = headerStyleId, height = 400),
+            SimpleTableColumn(title = "col1", id = "col1", width = 4000)
+        )
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId),
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .externalSource(sourceId, someSource)
+            .appendStyle(headerStyleId, headerStyle)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        assertTrue(file.exists(), "file was not created")
+        assertRowHeight(file, sheetId = 0, rowIdx = 1, 400)
+        assertColumnWidth(file, sheetId = 0, columnIdx = 1, 4000)
+    }
+
 }

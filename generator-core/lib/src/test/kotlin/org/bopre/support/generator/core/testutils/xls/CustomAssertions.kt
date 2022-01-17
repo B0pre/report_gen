@@ -36,6 +36,60 @@ fun assertSheetInFile(file: File, sheetId: Int, expectedSheetValues: Array<Array
     }
 }
 
+fun assertRowHeight(
+    file: File,
+    sheetId: Int,
+    rowIdx: Int,
+    expectedRowHeight: Number,
+    message: String = ""
+) {
+    val expectedRowHeightInt = expectedRowHeight.toInt()
+
+    basicWorkbookAssertion(
+        file,
+        { workbook ->
+            val sheet = workbook.getSheetAt(sheetId)
+            val row = sheet.getRow(rowIdx)
+            row.height.toInt()
+        },
+        expectedRowHeightInt,
+        "$message: wrong row[$rowIdx] height in $file"
+    )
+}
+
+fun assertColumnWidth(
+    file: File,
+    sheetId: Int,
+    columnIdx: Int,
+    expectedColumnWidth: Number,
+    message: String = ""
+) {
+    val expectedColumnWidthInt = expectedColumnWidth.toInt()
+    basicWorkbookAssertion(
+        file,
+        { workbook ->
+            val sheet = workbook.getSheetAt(sheetId)
+            sheet.getColumnWidth(columnIdx)
+        },
+        expectedColumnWidthInt,
+        "$message: wrong column[$columnIdx] width in $file"
+    )
+}
+
+fun <T> basicWorkbookAssertion(
+    file: File,
+    workbookSetting: (wb: Workbook) -> T,
+    expected: T,
+    message: String
+) {
+    val inputStream = FileInputStream(file)
+    //Instantiate Excel workbook using existing file:
+    val workbook = WorkbookFactory.create(inputStream)
+
+    val actual = workbookSetting.invoke(workbook)
+    assertEquals(expected, actual, message)
+}
+
 fun assertCellStyles(file: File, sheetId: Int, vararg assertion: GenericCell<CellStyleAssertion>) {
     assertCellStyles(file, sheetId, assertion.toList())
 }

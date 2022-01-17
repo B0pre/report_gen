@@ -8,6 +8,7 @@ import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.RenderContext
 import java.time.LocalDate
 import java.util.*
+import kotlin.math.max
 
 class TableHandler : ContentHandler {
 
@@ -61,6 +62,21 @@ class TableHandler : ContentHandler {
                 bodyRow.createCell(bodyColumnNum++)
 
             for (column in content.getColumns()) {
+                with(column.getWidth())
+                {
+                    if (this != null) {
+                        val currentWidth = sheet.getColumnWidth(bodyColumnNum)
+                        val newWidth = max(this, currentWidth)
+                        sheet.setColumnWidth(bodyColumnNum, newWidth)
+                    }
+                }
+                with(column.getHeight()) {
+                    if (this != null) {
+                        val currentHeight = bodyRow.height
+                        val newHeight = max(this, currentHeight.toInt())
+                        bodyRow.height = newHeight.toShort()
+                    }
+                }
                 val cell = bodyRow.createCell(bodyColumnNum++)
                 val newStyle = context.getStyleResolver().resolve(column.getStyleId())
                 if (newStyle != null)
