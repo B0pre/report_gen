@@ -3,6 +3,7 @@ package org.bopre.support.generator.examples;
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate;
 import org.bopre.support.generator.core.processor.render.Generator;
 import org.bopre.support.generator.core.processor.render.Generators;
+import org.bopre.support.generator.examples.jdbc.ExampleJDBCh2;
 
 import java.io.File;
 import java.net.URL;
@@ -11,7 +12,8 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        simpleStaticExample();
+        //simpleStaticExample();
+        ExampleJDBCh2.jdbcH2Example();
     }
 
     private static void simpleStaticExample() throws Exception {

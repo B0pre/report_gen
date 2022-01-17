@@ -14,7 +14,7 @@ class Generators {
 
         fun fromYaml(file: File, externalSources: Map<String, LineSource> = mapOf()): GeneratorTemplate {
             val yaml: String = file.useLines { it.joinToString("\n") }
-            return yamlConfigurer.configure(yaml)
+            return yamlConfigurer.configure(yaml, externalSources)
         }
     }
 

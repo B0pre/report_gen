@@ -1,0 +1,49 @@
+docname: sample document
+styles:
+  - id: style_main
+    fontSize: 9
+    font: Arial
+globalSettings:
+  headerStyle:
+    type: defined
+    id: style_main
+  style:
+    type: defined
+    id: style_main
+sheets:
+  - id: mainReport
+    name: Очень важный отчет
+    content:
+      - type: table
+        sourceId: source_01
+        id: table0
+        title: table0
+        showHeader: true
+        columns:
+          - id: id
+            title: Идентификатор
+          - id: name
+            title: Должность
+          - id: salary
+            style:
+              type: inline
+              definition:
+                format: 0.00
+                width: 32
+                borders:
+                  right: MEDIUM
+                  left: MEDIUM
+                  top: MEDIUM
+                  bottom: MEDIUM
+                font: Arial
+            title: Зарплата
+          - id: added_date
+            style:
+              type: inline
+              definition:
+                width: 32
+            title: Дата добавления
+sources:
+  - type: external
+    id: source_01
+    name: jdbc_source
