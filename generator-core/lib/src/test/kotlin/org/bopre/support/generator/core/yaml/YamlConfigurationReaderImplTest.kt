@@ -119,7 +119,9 @@ class YamlConfigurationReaderImplTest {
                 StyleDefinition(
                     id = "additional_big",
                     fontSize = 20,
-                    font = "Arial"
+                    font = "Arial",
+                    width = 3000.0,
+                    height = 120.0
                 )
             ),
             sheets = listOf(

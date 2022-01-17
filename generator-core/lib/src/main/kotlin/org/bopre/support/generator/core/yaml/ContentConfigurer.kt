@@ -13,6 +13,11 @@ import org.bopre.support.generator.core.yaml.data.ShiftDefinition
 
 class ContentConfigurer {
 
+    companion object {
+        private const val CELL_WIDTH_MULTIPLIER: Int = 256
+        private const val CELL_HEIGHT_MULTIPLIER: Int = 20
+    }
+
     fun configureContent(
         definition: ContentDefinition,
         styleRegister: StyleRegister
@@ -71,8 +76,19 @@ class ContentConfigurer {
 
         //define cell`s style
         val styleId = styleRegister.getCellStyleId(StyleRegister.StyleScope.BODY, cell.style)
-        if (styleId != null)
+        if (styleId != null) {
             columnBuilder.styleId(styleId)
+            styleRegister.getRegistered()[styleId]?.let {
+                val height = it.height;
+                val width = it.width
+                if (height != null) {
+                    columnBuilder.height(height = (height * CELL_HEIGHT_MULTIPLIER).toInt())
+                }
+                if (width != null) {
+                    columnBuilder.width(width = (width * CELL_WIDTH_MULTIPLIER).toInt())
+                }
+            }
+        }
 
         //define header`s style
         val headerStyleId = styleRegister.getCellStyleId(StyleRegister.StyleScope.HEADER, cell.headerStyle)

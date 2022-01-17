@@ -22,5 +22,8 @@ data class StyleDefinition(
 
     val wrapped: Boolean? = null,
 
-    val format: String? = null
+    val format: String? = null,
+
+    val width: Double? = null,
+    val height: Double? = null
 )

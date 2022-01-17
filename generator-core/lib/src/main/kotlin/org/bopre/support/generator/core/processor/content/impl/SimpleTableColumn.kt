@@ -31,7 +31,9 @@ class SimpleTableColumn(
         private var title: String,
         private var id: String,
         private var styleId: String = "",
-        private var headerStyleId: String = ""
+        private var headerStyleId: String = "",
+        private var width: Int? = null,
+        private var height: Int? = null
     ) {
 
         fun title(title: String): SimpleTableColumnBuilder {
@@ -54,12 +56,24 @@ class SimpleTableColumn(
             return this
         }
 
+        fun width(width: Int): SimpleTableColumnBuilder {
+            this.width = width
+            return this
+        }
+
+        fun height(height: Int): SimpleTableColumnBuilder {
+            this.height = height
+            return this
+        }
+
         fun build(): SimpleTableColumn {
             return SimpleTableColumn(
                 title = title,
                 id = id,
                 styleId = styleId,
-                headerStyleId = headerStyleId
+                headerStyleId = headerStyleId,
+                width = width,
+                height = height
             )
         }
     }

@@ -6,6 +6,8 @@ styles:
   - id: additional_big
     fontSize: 20
     font: Arial
+    width: 3000
+    height: 120
 globalSettings:
   headerStyle:
     type: defined

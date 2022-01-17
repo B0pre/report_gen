@@ -574,6 +574,7 @@ class YamlConfigurerTest {
                     .instance() as ConfigurableTemplate.Result.Success
                 ).value;
         generator.renderToFile(file);
+        println("$message: $file")
         assertTrue(file.exists(), "file was not created")
         assertAll(
             message,
@@ -673,6 +674,16 @@ class YamlConfigurerTest {
                             )
                         }
                     }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithChangedCellSize", documentWithChangedCellSize()),
+                    "documentWithChangedCellSize",
+                    listOf({ file: File ->
+                        { assertColumnWidth(file, 0, 0, 256 * 32) }
+                    }, { file: File ->
+                        { assertRowHeight(file, 0, 1, 20 * 150) }
+                    })
                 ),
             )
         }
