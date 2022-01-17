@@ -1,0 +1,38 @@
+docname: sample document
+styles:
+  - id: style_main
+    fontSize: 20
+    font: Arial
+    width: 32
+    height: 150
+globalSettings:
+  headerStyle:
+    type: defined
+    id: style_main
+  style:
+    type: defined
+    id: style_main
+sheets:
+  - id: mainReport
+    name: Очень важный отчет
+    content:
+      - type: table
+        sourceId: source_01
+        id: table0
+        title: table0
+        showHeader: true
+        columns:
+          - id: id
+            title: identifier
+          - id: name
+            title: username
+sources:
+  - type: static
+    id: source_01
+    lines:
+      - id: 01
+        name: user_01
+      - id: 02
+        name: user_02
+      - id: 03
+        name: ${admin.user.alias}

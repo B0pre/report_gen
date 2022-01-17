@@ -22,6 +22,14 @@ dependencies {
     implementation project(':lib')
 }
 
+jar {
+	manifest {
+		attributes(
+			"Main-Class": "org.bopre.support.generator.examples.Main"
+		)
+	}
+}
+
 test {
     useJUnitPlatform()
 }
