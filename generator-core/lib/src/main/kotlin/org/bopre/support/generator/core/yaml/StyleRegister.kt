@@ -1,5 +1,6 @@
 package org.bopre.support.generator.core.yaml
 
+import org.bopre.support.generator.core.utils.ScopedStack
 import org.bopre.support.generator.core.yaml.data.StyleDefinition
 import org.bopre.support.generator.core.yaml.data.StyleUsage
 import java.util.*
@@ -21,8 +22,9 @@ class StyleRegister {
     //registered styles (definition <-> styleId)
     private val registerInvert = HashMap<StyleDefinition, String>()
 
-    //stack with default styles
-    private val currentDefaultStyleStack = HashMap<StyleScope, Stack<String>>()
+    //stack with default styles (styleId in register)
+    private val defaultStyleStack: ScopedStack<StyleScope, String> =
+        ScopedStack.create()
 
     /**
      * register style definition
@@ -67,7 +69,7 @@ class StyleRegister {
         val ownStyle = getCellStyleId(cellStyle)
         if (ownStyle != null)
             return ownStyle
-        return defaultsTop(scope)
+        return defaultStyleStack.top(scope)
     }
 
     private fun extendStyle(
@@ -75,7 +77,7 @@ class StyleRegister {
         cellStyle: StyleUsage?,
     ): String? {
         val styleId = UUID.randomUUID().toString()
-        val defaultStyle = register[defaultsTop(scope)]
+        val defaultStyle = register[defaultStyleStack.top(scope)]
         val stylesSequence = mutableListOf<StyleDefinition>()
 
         defaultStyle?.let { stylesSequence.addAll(it) }
@@ -93,41 +95,13 @@ class StyleRegister {
     //stack functions
 
     /**
-     * push current default style for scope
-     */
-    fun defaultsPush(scope: StyleScope, styleId: String) {
-        setUpScope(scope)
-        currentDefaultStyleStack[scope]?.push(styleId)
-    }
-
-    /**
-     * get current default style for scope
-     */
-    fun defaultsTop(scope: StyleScope): String? {
-        setUpScope(scope)
-        if (currentDefaultStyleStack[scope].isNullOrEmpty())
-            return null
-        return currentDefaultStyleStack[scope]?.peek()
-    }
-
-    /**
-     * retrieve current default style for scope
-     */
-    fun defaultsPop(scope: StyleScope): String? {
-        setUpScope(scope)
-        if (currentDefaultStyleStack[scope].isNullOrEmpty())
-            return null
-        return currentDefaultStyleStack[scope]?.pop()
-    }
-
-    /**
      * Push style to stack only if it is not null
      */
     fun pushIfNotNull(scope: StyleScope, styleUsage: StyleUsage?) {
         if (styleUsage != null) {
             val styleId = getCellStyleId(scope, styleUsage)
             if (styleId != null)
-                defaultsPush(
+                defaultStyleStack.push(
                     scope,
                     styleId
                 )
@@ -141,16 +115,7 @@ class StyleRegister {
         if (styleUsage != null) {
             val styleId = getCellStyleId(scope, styleUsage)
             if (styleId != null)
-                defaultsPop(scope)
-        }
-    }
-
-    /**
-     * create stack for required scope if not exists
-     */
-    private fun setUpScope(scope: StyleScope) {
-        if (!currentDefaultStyleStack.containsKey(scope)) {
-            currentDefaultStyleStack[scope] = Stack()
+                defaultStyleStack.pop(scope)
         }
     }
 
