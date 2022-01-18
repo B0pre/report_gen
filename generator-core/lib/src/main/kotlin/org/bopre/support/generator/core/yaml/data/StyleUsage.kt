@@ -7,6 +7,10 @@ import kotlinx.serialization.Serializable
 sealed class StyleUsage {
     abstract val behaviour: StyleBehaviour
 
+    companion object {
+        val DEFAULT_STYLE_BEHAVIOUR: StyleBehaviour = StyleBehaviour.EXTEND
+    }
+
     enum class StyleBehaviour {
         /**
          * extend globally defined style
@@ -23,14 +27,14 @@ sealed class StyleUsage {
     @SerialName("defined")
     data class DefinedStyle(
         val id: String,
-        override val behaviour: StyleBehaviour = StyleBehaviour.OVERWRITE
+        override val behaviour: StyleBehaviour = DEFAULT_STYLE_BEHAVIOUR
     ) : StyleUsage()
 
     @Serializable
     @SerialName("inline")
     data class InlineStyle(
         val definition: StyleDefinition,
-        override val behaviour: StyleBehaviour = StyleBehaviour.OVERWRITE
+        override val behaviour: StyleBehaviour = DEFAULT_STYLE_BEHAVIOUR
     ) : StyleUsage()
 
 }
