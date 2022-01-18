@@ -79,8 +79,8 @@ class ContentConfigurer {
         if (styleId != null) {
             columnBuilder.styleId(styleId)
             styleRegister.getRegistered()[styleId]?.let {
-                val height = it.height;
-                val width = it.width
+                val height = it.map { it.height }.filterNotNull().lastOrNull()
+                val width = it.map { it.width }.filterNotNull().lastOrNull()
                 if (height != null) {
                     columnBuilder.height(height = (height * CELL_HEIGHT_MULTIPLIER).toInt())
                 }

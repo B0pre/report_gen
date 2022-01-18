@@ -44,6 +44,7 @@ sheets:
               id: style_main
             style:
               type: defined
+              behaviour: EXTEND
               id: style_main
           - id: name
             title: username
@@ -61,6 +62,7 @@ sheets:
             title: identifier
             style:
               type: inline
+              behaviour: OVERWRITE
               definition:
                 fontSize: 20
                 alignV: CENTER

@@ -78,30 +78,32 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
         }
     }
 
-    private fun prepareCellSettings(cellStyle: StyleDefinition): CellSettings {
-        var cellSettingsBuilder = CellSettings.builder()
+    private fun prepareCellSettings(cellStyleChain: List<StyleDefinition>): CellSettings {
+        val cellSettingsBuilder = CellSettings.builder()
         val bordersBuilder = CellBorders.builder()
-        cellStyle.borders?.left?.let { bordersBuilder.left(it) }
-        cellStyle.borders?.right?.let { bordersBuilder.right(it) }
-        cellStyle.borders?.top?.let { bordersBuilder.top(it) }
-        cellStyle.borders?.bottom?.let { bordersBuilder.bottom(it) }
+        for (cellStyle in cellStyleChain) {
+            cellStyle.borders?.left?.let { bordersBuilder.left(it) }
+            cellStyle.borders?.right?.let { bordersBuilder.right(it) }
+            cellStyle.borders?.top?.let { bordersBuilder.top(it) }
+            cellStyle.borders?.bottom?.let { bordersBuilder.bottom(it) }
 
-        cellStyle.fontSize?.let { cellSettingsBuilder.height(it) }
+            cellStyle.fontSize?.let { cellSettingsBuilder.height(it) }
 
-        cellStyle.alignV?.let { cellSettingsBuilder.verticalAlignment(it) }
-        cellStyle.alignH?.let { cellSettingsBuilder.horizontalAlignment(it) }
+            cellStyle.alignV?.let { cellSettingsBuilder.verticalAlignment(it) }
+            cellStyle.alignH?.let { cellSettingsBuilder.horizontalAlignment(it) }
 
-        cellStyle.bold?.let { cellSettingsBuilder.isBold(it) }
-        cellStyle.italic?.let { cellSettingsBuilder.isItalic(it) }
-        cellStyle.strikeout?.let { cellSettingsBuilder.isStrikeout(it) }
+            cellStyle.bold?.let { cellSettingsBuilder.isBold(it) }
+            cellStyle.italic?.let { cellSettingsBuilder.isItalic(it) }
+            cellStyle.strikeout?.let { cellSettingsBuilder.isStrikeout(it) }
 
-        cellStyle.wrapped?.let { cellSettingsBuilder.isWrapped(it) }
+            cellStyle.wrapped?.let { cellSettingsBuilder.isWrapped(it) }
 
-        cellStyle.font?.let { cellSettingsBuilder.font(it) }
+            cellStyle.font?.let { cellSettingsBuilder.font(it) }
 
-        cellStyle.format?.let { cellSettingsBuilder.dataFormat(it) }
+            cellStyle.format?.let { cellSettingsBuilder.dataFormat(it) }
 
-        cellSettingsBuilder.borders(bordersBuilder.build())
+            cellSettingsBuilder.borders(bordersBuilder.build())
+        }
         return cellSettingsBuilder.build()
     }
 

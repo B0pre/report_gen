@@ -370,3 +370,187 @@ fun documentWithChangedCellSize(): Document {
     )
 
 }
+
+fun documentWithCellExtendStyle(): Document {
+    return Document(
+        docname = "sample",
+        globalSettings = GlobalDocumentSettings(
+            style = StyleUsage.DefinedStyle("global_document")
+        ),
+        styles = listOf(
+            StyleDefinition(
+                id = "global_document",
+                fontSize = 20
+            ),
+            StyleDefinition(
+                id = "local_cell_style",
+                font = "Arial"
+            )
+        ),
+        sheets = listOf(
+            DocumentSheet(
+                id = "report_0",
+                name = "report number 0",
+                content = listOf(
+                    ContentDefinition.TableDefinition(
+                        id = "table1",
+                        title = "table1 for report 0",
+                        sourceId = "source_01",
+                        columns = listOf(
+                            CellParameters(
+                                id = "col0",
+                                title = "col0",
+                                style = StyleUsage.DefinedStyle(
+                                    id = "local_cell_style",
+                                    behaviour = StyleUsage.StyleBehaviour.EXTEND
+                                )
+                            ),
+                            CellParameters(
+                                id = "col1",
+                                title = "col1",
+                                style = StyleUsage.DefinedStyle(
+                                    id = "local_cell_style",
+                                    behaviour = StyleUsage.StyleBehaviour.OVERWRITE
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        sources = listOf(
+            SourceDefinition.static(
+                "source_01",
+                listOf(
+                    mapOf("col0" to "01", "col1" to "02")
+                )
+            )
+        )
+    )
+
+}
+
+fun documentOverrideDocumentWithTableStyle(): Document {
+    return Document(
+        docname = "sample",
+        globalSettings = GlobalDocumentSettings(
+            style = StyleUsage.DefinedStyle("global_document")
+        ),
+        styles = listOf(
+            StyleDefinition(
+                id = "global_document",
+                fontSize = 20
+            ),
+            StyleDefinition(
+                id = "table_02_styles",
+                fontSize = 14
+            )
+        ),
+        sheets = listOf(
+            DocumentSheet(
+                id = "report_0",
+                name = "report number 0",
+                content = listOf(
+                    ContentDefinition.TableDefinition(
+                        id = "table1",
+                        title = "table1 for report 0",
+                        sourceId = "source_01",
+                        columns = listOf(
+                            CellParameters(
+                                id = "col0",
+                                title = "col0"
+                            ),
+                            CellParameters(
+                                id = "col1",
+                                title = "col1"
+                            )
+                        )
+                    ),
+                    ContentDefinition.TableDefinition(
+                        id = "table2",
+                        title = "table2 for report 0",
+                        sourceId = "source_01",
+                        style = StyleUsage.DefinedStyle(
+                            id = "table_02_styles",
+                            behaviour = StyleUsage.StyleBehaviour.OVERWRITE
+                        ),
+                        columns = listOf(
+                            CellParameters(
+                                id = "col0",
+                                title = "col0"
+                            ),
+                            CellParameters(
+                                id = "col1",
+                                title = "col1"
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        sources = listOf(
+            SourceDefinition.static(
+                "source_01",
+                listOf(
+                    mapOf("col0" to "01", "col1" to "02")
+                )
+            )
+        )
+    )
+
+}
+
+fun sheetInheritStyleFromDocument(): Document {
+    return Document(
+        docname = "sample",
+        globalSettings = GlobalDocumentSettings(
+            style = StyleUsage.DefinedStyle("global_document")
+        ),
+        styles = listOf(
+            StyleDefinition(
+                id = "global_document",
+                fontSize = 20
+            ),
+            StyleDefinition(
+                id = "sheet_style",
+                font = "Arial"
+            )
+        ),
+        sheets = listOf(
+            DocumentSheet(
+                id = "report_0",
+                name = "report number 0",
+                style = StyleUsage.DefinedStyle(
+                    id = "sheet_style",
+                    behaviour = StyleUsage.StyleBehaviour.EXTEND
+                ),
+                content = listOf(
+                    ContentDefinition.TableDefinition(
+                        id = "table1",
+                        title = "table1 for report 0",
+                        sourceId = "source_01",
+                        columns = listOf(
+                            CellParameters(
+                                id = "col0",
+                                title = "col0"
+                            ),
+                            CellParameters(
+                                id = "col1",
+                                title = "col1"
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        sources = listOf(
+            SourceDefinition.static(
+                "source_01",
+                listOf(
+                    mapOf("col0" to "01", "col1" to "02")
+                )
+            )
+        )
+    )
+
+}

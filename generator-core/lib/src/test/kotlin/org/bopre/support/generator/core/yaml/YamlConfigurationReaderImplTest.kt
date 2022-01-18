@@ -143,8 +143,13 @@ class YamlConfigurationReaderImplTest {
                                 CellParameters(
                                     id = "id",
                                     title = "identifier",
-                                    headerStyle = StyleUsage.DefinedStyle("style_main"),
-                                    style = StyleUsage.DefinedStyle("style_main")
+                                    headerStyle = StyleUsage.DefinedStyle(
+                                        id = "style_main",
+                                    ),
+                                    style = StyleUsage.DefinedStyle(
+                                        id = "style_main",
+                                        behaviour = StyleUsage.StyleBehaviour.EXTEND
+                                    )
                                 ),
                                 CellParameters(id = "name", title = "username")
                             )
@@ -159,7 +164,8 @@ class YamlConfigurationReaderImplTest {
                                 CellParameters(
                                     id = "id", title = "identifier", style =
                                     StyleUsage.InlineStyle(
-                                        StyleDefinition(
+                                        behaviour = StyleUsage.StyleBehaviour.OVERWRITE,
+                                        definition = StyleDefinition(
                                             fontSize = 20,
                                             font = "Arial",
                                             borders = CellBordersYaml(

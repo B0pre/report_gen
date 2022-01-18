@@ -3,6 +3,7 @@ package org.bopre.support.generator.core.yaml
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
+import org.apache.poi.xssf.usermodel.XSSFFont
 import org.bopre.support.generator.core.processor.data.Line
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate
@@ -684,6 +685,67 @@ class YamlConfigurerTest {
                     }, { file: File ->
                         { assertRowHeight(file, 0, 1, 20 * 150) }
                     })
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentWithCellExtendStyle", documentWithCellExtendStyle()),
+                    "documentWithCellExtendStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                //first column extend global style
+                                GenericCell(1, 0, CellFontHeightAssertion(20)),
+                                GenericCell(1, 0, CellFontNameAlignmentAssertion("Arial")),
+                                //second column overwrite global style
+                                GenericCell(1, 1, CellFontNameAlignmentAssertion("Arial")),
+                                GenericCell(1, 1, CellFontHeightAssertion(XSSFFont.DEFAULT_FONT_SIZE))
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("documentOverrideDocumentWithTableStyle", documentOverrideDocumentWithTableStyle()),
+                    "documentOverrideDocumentWithTableStyle",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                //col0 | col1   <- table use global styles
+                                //  01 | 02
+                                //col0 | col1   <- table use own (override) styles
+                                //  01 | 02
+                                //first table extend global style
+                                GenericCell(1, 0, CellFontHeightAssertion(20)),
+                                GenericCell(1, 1, CellFontHeightAssertion(20)),
+                                //second table overwrite global style
+                                GenericCell(3, 0, CellFontHeightAssertion(14)),
+                                GenericCell(3, 1, CellFontHeightAssertion(14))
+                            )
+                        }
+                    }
+                ),
+                //====
+                Arguments.of(
+                    Named.of("sheetInheritStyleFromDocument", sheetInheritStyleFromDocument()),
+                    "sheetInheritStyleFromDocument",
+                    listOf { file: File ->
+                        {
+                            assertCellStyles(
+                                file,
+                                0,
+                                //col0 | col1
+                                //  01 | 02
+                                GenericCell(1, 0, CellFontHeightAssertion(20)),
+                                GenericCell(1, 0, CellFontNameAlignmentAssertion("Arial")),
+                                GenericCell(1, 1, CellFontHeightAssertion(20)),
+                                GenericCell(1, 1, CellFontNameAlignmentAssertion("Arial"))
+                            )
+                        }
+                    }
                 ),
             )
         }

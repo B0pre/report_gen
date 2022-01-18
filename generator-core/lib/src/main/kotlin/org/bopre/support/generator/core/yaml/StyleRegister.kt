@@ -16,7 +16,7 @@ class StyleRegister {
     }
 
     //registered styles (styleId <-> definition)
-    private val register = HashMap<String, StyleDefinition>()
+    private val register = HashMap<String, List<StyleDefinition>>()
 
     //registered styles (definition <-> styleId)
     private val registerInvert = HashMap<StyleDefinition, String>()
@@ -28,14 +28,14 @@ class StyleRegister {
      * register style definition
      */
     fun register(styleId: String, definition: StyleDefinition) {
-        register[styleId] = definition
+        register[styleId] = listOf(definition)
         registerInvert[definition] = styleId
     }
 
     /**
      * get all style definitions
      */
-    fun getRegistered(): Map<String, StyleDefinition> = HashMap(register)
+    fun getRegistered(): Map<String, List<StyleDefinition>> = HashMap(register)
 
     /**
      * get styleId by definition if was registered yet
@@ -58,11 +58,36 @@ class StyleRegister {
      * get styleId by definition if was registered yet
      * or try return scope default if exists
      */
-    fun getCellStyleId(scope: StyleScope, cellStyle: StyleUsage?): String? {
+    fun getCellStyleId(
+        scope: StyleScope,
+        cellStyle: StyleUsage?
+    ): String? {
+        if (cellStyle != null && cellStyle.behaviour == StyleUsage.StyleBehaviour.EXTEND)
+            return extendStyle(scope, cellStyle)
         val ownStyle = getCellStyleId(cellStyle)
         if (ownStyle != null)
             return ownStyle
         return defaultsTop(scope)
+    }
+
+    private fun extendStyle(
+        scope: StyleScope,
+        cellStyle: StyleUsage?,
+    ): String? {
+        val styleId = UUID.randomUUID().toString()
+        val defaultStyle = register[defaultsTop(scope)]
+        val stylesSequence = mutableListOf<StyleDefinition>()
+
+        defaultStyle?.let { stylesSequence.addAll(it) }
+        val cellStyleId = getCellStyleId(cellStyle)
+        if (cellStyleId != null) {
+            val cellStyle = register[cellStyleId]
+            if (cellStyle != null)
+                stylesSequence.addAll(cellStyle)
+        }
+
+        register[styleId] = stylesSequence
+        return styleId
     }
 
     //stack functions
@@ -100,7 +125,7 @@ class StyleRegister {
      */
     fun pushIfNotNull(scope: StyleScope, styleUsage: StyleUsage?) {
         if (styleUsage != null) {
-            val styleId = getCellStyleId(styleUsage)
+            val styleId = getCellStyleId(scope, styleUsage)
             if (styleId != null)
                 defaultsPush(
                     scope,
@@ -114,7 +139,7 @@ class StyleRegister {
      */
     fun popIfNotNull(scope: StyleScope, styleUsage: StyleUsage?) {
         if (styleUsage != null) {
-            val styleId = getCellStyleId(styleUsage)
+            val styleId = getCellStyleId(scope, styleUsage)
             if (styleId != null)
                 defaultsPop(scope)
         }
