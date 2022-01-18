@@ -11,10 +11,11 @@ import org.bopre.support.generator.core.processor.render.GeneratorTemplate
 import org.bopre.support.generator.core.processor.render.PoiDocumentRendererBuilder
 import org.bopre.support.generator.core.yaml.data.StyleDefinition
 
-class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfigurer {
-
-    val sourConfigurer: SourceConfigurer = SourceConfigurer()
+class YamlConfigurerImpl(
+    val configReader: YamlConfigurationReader = YamlConfigurationReaderImpl(),
+    val sourceConfigurer: SourceConfigurer = SourceConfigurer(),
     val contentConfigurer: ContentConfigurer = ContentConfigurer()
+) : YamlConfigurer {
 
     override fun configure(yaml: String, externalSources: Map<String, LineSource>): GeneratorTemplate {
         val parsedDocument = configReader.readDocument(yaml)
@@ -63,7 +64,7 @@ class YamlConfigurerImpl(val configReader: YamlConfigurationReader) : YamlConfig
         }
 
         for (sourceDef in parsedDocument.sources) {
-            val source = sourConfigurer.configureSource(sourceDef, externalSources)
+            val source = sourceConfigurer.configureSource(sourceDef, externalSources)
             if (source != null)
                 builder.externalSource(sourceDef.id, source)
         }

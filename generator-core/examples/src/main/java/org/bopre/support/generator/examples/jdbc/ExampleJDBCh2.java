@@ -3,7 +3,7 @@ package org.bopre.support.generator.examples.jdbc;
 import org.bopre.support.generator.core.processor.data.LineSource;
 import org.bopre.support.generator.core.processor.render.ConfigurableTemplate;
 import org.bopre.support.generator.core.processor.render.Generator;
-import org.bopre.support.generator.core.processor.render.Generators;
+import org.bopre.support.generator.core.processor.Generators;
 import org.h2.jdbcx.JdbcDataSource;
 
 import javax.naming.NamingException;
