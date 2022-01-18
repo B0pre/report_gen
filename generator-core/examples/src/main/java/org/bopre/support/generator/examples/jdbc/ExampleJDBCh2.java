@@ -1,14 +1,16 @@
 package org.bopre.support.generator.examples.jdbc;
 
-import org.bopre.support.generator.core.processor.data.LineSource;
-import org.bopre.support.generator.core.processor.render.ConfigurableTemplate;
-import org.bopre.support.generator.core.processor.render.Generator;
 import org.bopre.support.generator.core.processor.Generators;
+import org.bopre.support.generator.core.processor.data.LineSource;
+import org.bopre.support.generator.core.processor.exception.GeneratorTemplateException;
+import org.bopre.support.generator.core.processor.render.Generator;
+import org.bopre.support.generator.core.processor.render.GeneratorTemplate;
 import org.h2.jdbcx.JdbcDataSource;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -34,26 +36,19 @@ public class ExampleJDBCh2 {
             "(6, 'name 5', 200, now())" +
             ";";
 
-    public static void jdbcH2Example() throws Exception {
+    public static void jdbcH2Example() throws SQLException, NamingException, URISyntaxException, GeneratorTemplateException {
         final DataSource ds = prepareDatabase();
         final LineSource jdbcSource = getSource(() -> ds, SEARCH_QUERY);
 
         File outputFile = new File("jdbc_h2_example.xlsx");
         URL fileLocation = ClassLoader.getSystemResource("examples/jdbc_h2_example.yaml");
-        File dir = new File(fileLocation.toURI());
+        File yamlDefinition = new File(fileLocation.toURI());
         Map<String, LineSource> externalSources = new HashMap<>();
         externalSources.put("jdbc_source", jdbcSource);
-        ConfigurableTemplate.Result<Generator> generatorTemplate = Generators.Companion.fromYaml(dir, externalSources).instance(
-                new HashMap<>() {{
-                    this.put("admin.user.alias", "root");
-                }}
-        );
-        if (generatorTemplate instanceof ConfigurableTemplate.Result.Success) {
-            ConfigurableTemplate.Result.Success<Generator> generator = ((ConfigurableTemplate.Result.Success) generatorTemplate);
-            generator.getValue().renderToFile(outputFile);
-        } else {
-            throw new RuntimeException("failed prepare report generator: " + generatorTemplate);
-        }
+
+        GeneratorTemplate template = Generators.fromYaml(yamlDefinition, externalSources);
+        Generator instance = Generators.processTemplate(template, new HashMap<>());
+        instance.renderToFile(outputFile);
     }
 
     public static LineSource getSource(Supplier<DataSource> dataSourceSupplier, String query) {
