@@ -87,7 +87,9 @@ class TableHandler : ContentHandler {
         return currentRowNum
     }
 
-    private fun Cell.setCellValueGeneric(value: Any) {
+    private fun Cell.setCellValueGeneric(value: Any?) {
+        if (value == null)
+            return
         when (value) {
             is String -> this.setCellValue(value)
             is Number -> this.setCellValue(value.toDouble())

@@ -6,7 +6,7 @@ interface TableColumn {
     fun getTitle(): String
     fun getStyleId(): String
     fun getHeaderStyleId(): String
-    fun getValue(source: Line): Any
+    fun getValue(source: Line): Any?
 
     fun getWidth(): Int?
     fun getHeight(): Int?
