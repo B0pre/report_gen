@@ -51,6 +51,9 @@ dependencies {
     //'ApachePOI'
     implementation("org.apache.poi:poi:4.1.2")
 
+    // https://mvnrepository.com/artifact/org.apache.poi/ooxml-schemas
+    implementation group: 'org.apache.poi', name: 'ooxml-schemas', version: '1.4'
+
     //'When creating an xlsx file, the following poi-ooxml required'
     implementation("org.apache.poi:poi-ooxml:4.1.2")
 

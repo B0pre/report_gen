@@ -1,8 +1,11 @@
 package org.bopre.support.generator.core.testutils.xls
 
+import org.apache.poi.openxml4j.opc.OPCPackage
+import org.apache.poi.openxml4j.opc.PackageAccess
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.xssf.usermodel.XSSFCell
-import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.*
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.WsDrDocument
 import java.io.File
 import java.io.FileInputStream
 import kotlin.test.assertEquals
@@ -123,6 +126,49 @@ fun assertCells(file: File, sheetId: Int, assertions: List<GenericCell<CellAsser
             .getCell(styleAssertion.col, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
         styleAssertion.value.assertCell(cell, "($cell) [${styleAssertion.row}:${styleAssertion.col}]")
     }
+}
+
+class Anchor(val col: Int, val row: Int)
+class TwoCellAnchor(val from: Anchor, val to: Anchor)
+
+fun List<CTTwoCellAnchor>.toAnchors(): List<TwoCellAnchor> {
+    return this.map { anchor ->
+        TwoCellAnchor(
+            from = Anchor(
+                col = anchor.from.col,
+                row = anchor.from.col
+            ),
+            to = Anchor(
+                col = anchor.to.col,
+                row = anchor.to.col
+            )
+        )
+    }
+}
+
+fun assertPicture(file: File, sheetId: Int, relationId: String, expectedAnchor: TwoCellAnchor) {
+    val opc = OPCPackage.open(file.absoluteFile, PackageAccess.READ);
+    val book = XSSFWorkbook(opc)
+
+    val sheet: XSSFSheet = book.getSheetAt(sheetId)
+    val relation = sheet.getRelationById(relationId)
+    assertNotNull(relation, "relation $relationId was not found for $file")
+    val relationType = relation?.relationParts?.first()?.relationship?.relationshipType
+    val etalon = XSSFRelation.DRAWINGS.relation
+
+    assertEquals(expected = etalon, actual = relationType, message = "wrong relation type");
+    val draw = WsDrDocument.Factory.parse(relation.packagePart.inputStream)
+    val allAnchors: List<CTTwoCellAnchor> = draw.wsDr.twoCellAnchorList
+
+    val searchAnchor = allAnchors
+        .filter { anchor ->
+            anchor.from.col == expectedAnchor.from.col
+                    && anchor.from.row == expectedAnchor.from.row
+                    && anchor.to.col == expectedAnchor.to.col
+                    && anchor.to.row == expectedAnchor.to.row
+        }.first()
+
+    assertNotNull(searchAnchor, "$file: not found required anchor $expectedAnchor, were: ${allAnchors.toAnchors()}")
 }
 
 fun interface CellAssertion {

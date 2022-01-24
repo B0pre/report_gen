@@ -5,17 +5,25 @@ import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.LineSource
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
+import org.bopre.support.generator.core.processor.render.handlers.PictureHandler
 import org.bopre.support.generator.core.processor.render.handlers.SeparatorHandler
 import org.bopre.support.generator.core.processor.render.handlers.TableHandler
+import java.io.InputStream
 import java.util.*
 
 class PoiDocumentRendererBuilder(
-    private val registeredContentHandlers: List<ContentHandler> = getDefaultHandlers()
+    private val registeredContentHandlers: List<ContentHandler> = getDefaultHandlers(),
 ) {
 
     private val registeredSources = HashMap<String, LineSource>()
     private val registeredSheets = LinkedList<Sheet>()
     private val registeredStyles = HashMap<String, CellSettings>()
+    private val registeredPictures = HashMap<String, () -> InputStream>()
+
+    fun appendPicture(relationId: String, inputStreamProvider: () -> InputStream): PoiDocumentRendererBuilder {
+        registeredPictures[relationId] = inputStreamProvider
+        return this
+    }
 
     fun externalSource(sourceId: String, someSource: LineSource): PoiDocumentRendererBuilder = with(this) {
         registeredSources[sourceId] = someSource
@@ -43,7 +51,8 @@ class PoiDocumentRendererBuilder(
             handlers = handlers,
             settings = settings,
             properties = renderProperties,
-            styles = styles
+            styles = styles,
+            pictureResolver = RenderContext.Companion.PictureResolver.fromMap(registeredPictures)
         )
     }
 
@@ -58,7 +67,7 @@ class PoiDocumentRendererBuilder(
     companion object {
         private fun getDefaultHandlers(): List<ContentHandler> {
             return listOf(
-                SeparatorHandler(), TableHandler()
+                SeparatorHandler(), TableHandler(), PictureHandler()
             )
         }
     }

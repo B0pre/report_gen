@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
+import java.io.FileInputStream
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.sql.Timestamp
@@ -510,6 +512,64 @@ class GeneratorBuilderTest {
         assertTrue(file.exists(), "file was not created")
         assertRowHeight(file, sheetId = 0, rowIdx = 1, 400)
         assertColumnWidth(file, sheetId = 0, columnIdx = 1, 4000)
+    }
+
+    @Test
+    fun `test cell picture`() {
+        val file = kotlin.io.path.createTempFile(suffix = ".xlsx").toFile()
+        val inputStreamProvider = { FileInputStream(getResourceAsFile("/test.jpg")) }
+        val relationId = "test-image-relation"
+
+        val sourceId = "source_id_01"
+
+        val someSource = LineSource.static(
+            listOf(
+                Line.fromMap(mapOf("col0" to "1", "col1" to "2")),
+            )
+        )
+        val columns = listOf(
+            SimpleTableColumn(title = "col0", id = "col0"),
+            SimpleTableColumn(title = "col1", id = "col1")
+        )
+        val contentsForSheet0: List<Content> = listOf(
+            SimpleTableContent(columns, sourceId),
+            SimplePictureContent(
+                relationId = relationId,
+                shift = SimpleContentShifts(left = 2, top = 2),
+                widthCells = 2,
+                heightCells = 2,
+            )
+        )
+
+        val sheet0 = SimpleSheet("sheet0", contentsForSheet0)
+        val renderer: PoiDocumentRenderer = PoiDocumentRendererBuilder()
+            .appendSheet(sheet0)
+            .appendPicture(relationId, inputStreamProvider)
+            .externalSource(sourceId, someSource)
+            .build(RenderProperties.empty())
+
+        renderer.renderToFile(file)
+
+        /**
+        1: | col0 | col1 |     |     |
+        2: | 1    |    2 |     |     |
+        3: |      |      |     |     |
+        4: |      |      |     |     |
+        5: |      |      | pic | pic |
+        6: |      |      | pic | pic |
+         */
+
+        assertTrue(file.exists(), "file was not created")
+        assertPicture(
+            file,
+            0,
+            relationId,
+            TwoCellAnchor(from = Anchor(col = 3, row = 5), to = Anchor(col = 4, row = 6))
+        )
+    }
+
+    fun getResourceAsFile(path: String): File {
+        return File(object {}.javaClass.getResource(path).file)
     }
 
 }

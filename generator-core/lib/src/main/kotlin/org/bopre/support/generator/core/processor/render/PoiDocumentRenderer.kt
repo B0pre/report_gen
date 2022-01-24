@@ -1,6 +1,7 @@
 package org.bopre.support.generator.core.processor.render
 
 import org.apache.poi.ss.usermodel.CellStyle
+import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Sheet
 import org.bopre.support.generator.core.processor.content.style.CellSettings
@@ -14,6 +15,7 @@ class PoiDocumentRenderer(
     val sheets: List<Sheet>,
     val handlers: List<ContentHandler>,
     val settings: DocumentSettings,
+    val pictureResolver: RenderContext.Companion.PictureResolver,
     private val styles: Map<String, CellSettings> = emptyMap(),
     private val properties: RenderProperties = RenderProperties.empty()
 ) : Generator() {
@@ -32,7 +34,7 @@ class PoiDocumentRenderer(
         val styles = prepareStyles(workBook)
         for (sheet in sheets) {
             val sheetPOI = workBook.createSheet(sheet.getTitle())
-            var context = RenderContext.init(settings = settings, properties = properties, styleResolver = styles)
+            var context = RenderContext.init(settings = settings, properties = properties, styleResolver = styles, pictureResolver = pictureResolver)
             for (content in sheet.getContents()) {
                 for (handler in handlers) {
                     if (!handler.supports(content)) continue
