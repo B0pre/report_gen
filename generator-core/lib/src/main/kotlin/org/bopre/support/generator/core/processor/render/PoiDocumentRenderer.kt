@@ -1,12 +1,11 @@
 package org.bopre.support.generator.core.processor.render
 
-import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Sheet
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
-import org.bopre.support.generator.core.processor.render.handlers.StyleResolver
+import org.bopre.support.generator.core.processor.render.support.XSSFWorkbookManager
 import java.io.File
 import java.io.FileOutputStream
 
@@ -17,6 +16,9 @@ class PoiDocumentRenderer(
     private val styles: Map<String, CellSettings> = emptyMap(),
     private val properties: RenderProperties = RenderProperties.empty(),
 ) : Generator() {
+
+    private val workbookManager = XSSFWorkbookManager()
+
     override fun renderToFile(file: File) {
         val workBook = renderWorkBook()
 
@@ -24,12 +26,14 @@ class PoiDocumentRenderer(
         val fileOutputStream = FileOutputStream(file)
         workBook.write(fileOutputStream)
         fileOutputStream.close()
+
+        workbookManager.clean(workBook)
     }
 
     private fun renderWorkBook(): XSSFWorkbook {
-        val workBook = XSSFWorkbook()
+        val workBook = workbookManager.create()
 
-        val styles = prepareStyles(workBook)
+        val styles = workbookManager.prepareStyles(workBook, styles)
         for (sheet in sheets) {
             val sheetPOI = workBook.createSheet(sheet.getTitle())
             var context = RenderContext.init(settings = settings, properties = properties, styleResolver = styles)
@@ -43,52 +47,6 @@ class PoiDocumentRenderer(
             }
         }
         return workBook
-    }
-
-    private fun prepareStyles(workbook: XSSFWorkbook): StyleResolver {
-        val stylesMap = styles
-            .map { it.key to createStyle(workbook, it.value) }
-            .toMap()
-        return StyleResolver.of(stylesMap)
-    }
-
-    private fun createStyle(workbook: XSSFWorkbook, settings: CellSettings): CellStyle {
-        val newStyle = workbook.createCellStyle()
-        val newFont = workbook.createFont()
-        settings.getHeightInPoints()?.let { newFont.fontHeightInPoints = it }
-        settings.getBorders()?.let {
-            newStyle.borderLeft = it.left
-            newStyle.borderRight = it.right
-            newStyle.borderTop = it.top
-            newStyle.borderBottom = it.bottom
-        }
-        settings.getIsWrapped()?.let {
-            newStyle.wrapText = it
-        }
-        settings.getHorizontalAlignment()?.let {
-            newStyle.alignment = it
-        }
-        settings.getVerticalAlignment()?.let {
-            newStyle.verticalAlignment = it
-        }
-        settings.getBold()?.let {
-            newFont.bold = it
-        }
-        settings.getItalic()?.let {
-            newFont.italic = it
-        }
-        settings.getStrikeout()?.let {
-            newFont.strikeout = it
-        }
-        settings.getFontName()?.let {
-            newFont.fontName = it
-        }
-        settings.getDataFormat()?.let {
-            val format = workbook.createDataFormat()
-            newStyle.dataFormat = format.getFormat(it)
-        }
-        newStyle.setFont(newFont)
-        return newStyle
     }
 
 }
