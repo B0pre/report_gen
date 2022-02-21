@@ -1,11 +1,11 @@
 package org.bopre.support.generator.core.processor.render
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.bopre.support.generator.core.processor.content.Sheet
 import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
-import org.bopre.support.generator.core.processor.render.support.XSSFWorkbookManager
+import org.bopre.support.generator.core.processor.render.support.SXSSFWorkbookManager
 import java.io.File
 import java.io.FileOutputStream
 
@@ -17,7 +17,7 @@ class PoiDocumentRenderer(
     private val properties: RenderProperties = RenderProperties.empty(),
 ) : Generator() {
 
-    private val workbookManager = XSSFWorkbookManager()
+    private val workbookManager = SXSSFWorkbookManager()
 
     override fun renderToFile(file: File) {
         val workBook = renderWorkBook()
@@ -30,7 +30,7 @@ class PoiDocumentRenderer(
         workbookManager.clean(workBook)
     }
 
-    private fun renderWorkBook(): XSSFWorkbook {
+    private fun renderWorkBook(): SXSSFWorkbook {
         val workBook = workbookManager.create()
 
         val styles = workbookManager.prepareStyles(workBook, styles)
