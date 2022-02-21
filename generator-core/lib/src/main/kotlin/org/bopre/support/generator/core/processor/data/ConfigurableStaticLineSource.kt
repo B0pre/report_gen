@@ -1,7 +1,7 @@
 package org.bopre.support.generator.core.processor.data
 
 class ConfigurableStaticLineSource(
-    private val lineTemplates: Collection<LineRender>
+    private val lineTemplates: Collection<LineRender>,
 ) : LineSource {
 
     companion object {
@@ -11,7 +11,7 @@ class ConfigurableStaticLineSource(
          * construct configurable line source using cell templates
          */
         fun fromLines(
-            lines: Collection<Map<String, CellTemplate>>
+            lines: Collection<Map<String, CellTemplate>>,
         ): ConfigurableStaticLineSource {
             val lineTemplates = lines.map {
                 LineRenderImpl.fromCellTemplates(it)
@@ -28,8 +28,8 @@ class ConfigurableStaticLineSource(
         }
     }
 
-    override fun start(properties: RenderProperties): Iterable<Line> {
-        return lineTemplates.map { it.createLine(properties) }.toList()
+    override fun start(properties: RenderProperties): CloseableIterable<Line> {
+        return CloseableIterable.fromIterable(lineTemplates.map { it.createLine(properties) }.toList())
     }
 
     interface LineRender {
@@ -37,7 +37,7 @@ class ConfigurableStaticLineSource(
     }
 
     class LineRenderImpl(
-        private val lineDefinition: Map<String, ValueResolver>
+        private val lineDefinition: Map<String, ValueResolver>,
     ) : LineRender {
         companion object {
             fun fromCellTemplates(cells: Map<String, CellTemplate>): LineRender {
@@ -93,7 +93,7 @@ class ConfigurableStaticLineSource(
 
         class Dynamic(
             private val paramName: String,
-            private val defaultValue: String
+            private val defaultValue: String,
         ) : CellTemplate {
             override fun cellPrepare(): ValueResolver {
                 return ValueResolver.DynamicResolver(paramName, defaultValue)
@@ -101,7 +101,7 @@ class ConfigurableStaticLineSource(
         }
 
         class Static(
-            private val value: String
+            private val value: String,
         ) : CellTemplate {
             override fun cellPrepare(): ValueResolver {
                 return ValueResolver.ConstValue(value)

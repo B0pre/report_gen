@@ -53,37 +53,40 @@ class TableHandler : ContentHandler<Sheet> {
         var lineSource: LineSource = settings.getSource(sourceId)
 
         //render body
-        for (line in lineSource.start(properties)) {
-            val bodyRow = sheet.createRow(currentRowNum++)
-            var bodyColumnNum = 0
+        lineSource.start(properties)
+            .use {
+                for (line in it) {
+                    val bodyRow = sheet.createRow(currentRowNum++)
+                    var bodyColumnNum = 0
 
-            //skip cells for left shift (body)
-            for (i in 0 until shifts.getShiftLeft())
-                bodyRow.createCell(bodyColumnNum++)
+                    //skip cells for left shift (body)
+                    for (i in 0 until shifts.getShiftLeft())
+                        bodyRow.createCell(bodyColumnNum++)
 
-            for (column in content.getColumns()) {
-                with(column.getWidth())
-                {
-                    if (this != null) {
-                        val currentWidth = sheet.getColumnWidth(bodyColumnNum)
-                        val newWidth = max(this, currentWidth)
-                        sheet.setColumnWidth(bodyColumnNum, newWidth)
+                    for (column in content.getColumns()) {
+                        with(column.getWidth())
+                        {
+                            if (this != null) {
+                                val currentWidth = sheet.getColumnWidth(bodyColumnNum)
+                                val newWidth = max(this, currentWidth)
+                                sheet.setColumnWidth(bodyColumnNum, newWidth)
+                            }
+                        }
+                        with(column.getHeight()) {
+                            if (this != null) {
+                                val currentHeight = bodyRow.height
+                                val newHeight = max(this, currentHeight.toInt())
+                                bodyRow.height = newHeight.toShort()
+                            }
+                        }
+                        val cell = bodyRow.createCell(bodyColumnNum++)
+                        val newStyle = context.getStyleResolver().resolve(column.getStyleId())
+                        if (newStyle != null)
+                            cell.setCellStyle(newStyle)
+                        cell.setCellValueGeneric(column.getValue(line))
                     }
                 }
-                with(column.getHeight()) {
-                    if (this != null) {
-                        val currentHeight = bodyRow.height
-                        val newHeight = max(this, currentHeight.toInt())
-                        bodyRow.height = newHeight.toShort()
-                    }
-                }
-                val cell = bodyRow.createCell(bodyColumnNum++)
-                val newStyle = context.getStyleResolver().resolve(column.getStyleId())
-                if (newStyle != null)
-                    cell.setCellStyle(newStyle)
-                cell.setCellValueGeneric(column.getValue(line))
             }
-        }
         return currentRowNum
     }
 

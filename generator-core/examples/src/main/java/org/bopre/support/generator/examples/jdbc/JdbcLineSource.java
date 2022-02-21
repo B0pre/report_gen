@@ -1,11 +1,13 @@
 package org.bopre.support.generator.examples.jdbc;
 
+import org.bopre.support.generator.core.processor.data.CloseableIterable;
 import org.bopre.support.generator.core.processor.data.Line;
 import org.bopre.support.generator.core.processor.data.LineSource;
 import org.bopre.support.generator.core.processor.data.RenderProperties;
 import org.jetbrains.annotations.NotNull;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,25 +29,40 @@ public class JdbcLineSource implements LineSource {
     }
 
     @Override
-    public Iterable<Line> start(RenderProperties properties) {
+    public CloseableIterable<Line> start(RenderProperties properties) {
         try {
-            return new IterableLine();
+            Connection conn = dataSourceSupplier.get().getConnection();
+            ResultSet rs = conn.createStatement().executeQuery(nativeSql);
+            return new IterableLine(rs);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private final class IterableLine implements Iterable<Line> {
+    private final static class IterableLine implements CloseableIterable<Line> {
+
+        private final ResultSet rs;
+
+        private IterableLine(ResultSet rs) {
+            this.rs = rs;
+        }
 
         @NotNull
         @Override
         public Iterator<Line> iterator() {
             try {
-                Connection conn = dataSourceSupplier.get().getConnection();
-                ResultSet rs = conn.createStatement().executeQuery(nativeSql);
                 return new IteratorLine(rs);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                throw new IOException(e);
             }
         }
 
