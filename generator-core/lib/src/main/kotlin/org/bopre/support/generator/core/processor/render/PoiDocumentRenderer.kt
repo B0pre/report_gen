@@ -6,6 +6,7 @@ import org.bopre.support.generator.core.processor.content.style.CellSettings
 import org.bopre.support.generator.core.processor.data.RenderProperties
 import org.bopre.support.generator.core.processor.render.handlers.ContentHandler
 import org.bopre.support.generator.core.processor.render.support.SXSSFWorkbookManager
+import org.bopre.support.generator.core.utils.CloseableWrap
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,19 +21,31 @@ class PoiDocumentRenderer(
     private val workbookManager = SXSSFWorkbookManager()
 
     override fun renderToFile(file: File) {
-        val workBook = renderWorkBook()
+        //create, render and close workbook
+        createAutoCloseableWorkbook()
+            .use {
+                val workBook = it.value
 
-        //write work book content to file
-        val fileOutputStream = FileOutputStream(file)
-        workBook.write(fileOutputStream)
-        fileOutputStream.close()
+                //render book
+                renderWorkBook(workBook)
 
-        workbookManager.clean(workBook)
+                //write workbook content to file
+                FileOutputStream(file)
+                    .use {
+                        workBook.write(it)
+                    }
+            }
     }
 
-    private fun renderWorkBook(): SXSSFWorkbook {
-        val workBook = workbookManager.create()
+    /**
+     * create instance of closeable wrap for workbook
+     */
+    private fun createAutoCloseableWorkbook(): CloseableWrap<SXSSFWorkbook> =
+        CloseableWrap(value = workbookManager.create(), closeAction = {
+            workbookManager.clean(it)
+        })
 
+    private fun renderWorkBook(workBook: SXSSFWorkbook) {
         val styles = workbookManager.prepareStyles(workBook, styles)
         for (sheet in sheets) {
             val sheetPOI = workBook.createSheet(sheet.getTitle())
@@ -46,7 +59,6 @@ class PoiDocumentRenderer(
                 }
             }
         }
-        return workBook
     }
 
 }
