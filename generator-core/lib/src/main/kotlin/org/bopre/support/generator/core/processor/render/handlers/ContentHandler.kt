@@ -1,12 +1,12 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
-import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.ss.usermodel.Sheet
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.render.RenderContext
 
-interface ContentHandler {
+interface ContentHandler<T : Sheet> {
     fun handleContent(
-        sheet: XSSFSheet, content: Content, context: RenderContext
+        sheet: T, content: Content, context: RenderContext,
     ): Int
 
     fun supports(content: Content): Boolean

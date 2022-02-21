@@ -10,7 +10,7 @@ import org.bopre.support.generator.core.processor.render.handlers.TableHandler
 import java.util.*
 
 class PoiDocumentRendererBuilder(
-    private val registeredContentHandlers: List<ContentHandler> = getDefaultHandlers()
+    private val registeredContentHandlers: List<ContentHandler<org.apache.poi.ss.usermodel.Sheet>> = getDefaultHandlers(),
 ) {
 
     private val registeredSources = HashMap<String, LineSource>()
@@ -56,7 +56,7 @@ class PoiDocumentRendererBuilder(
     }
 
     companion object {
-        private fun getDefaultHandlers(): List<ContentHandler> {
+        private fun getDefaultHandlers(): List<ContentHandler<org.apache.poi.ss.usermodel.Sheet>> {
             return listOf(
                 SeparatorHandler(), TableHandler()
             )

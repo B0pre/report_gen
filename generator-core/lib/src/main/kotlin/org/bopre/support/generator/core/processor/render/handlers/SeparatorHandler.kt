@@ -1,15 +1,15 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
-import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.ss.usermodel.Sheet
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.SeparatorContent
 import org.bopre.support.generator.core.processor.render.RenderContext
 
-class SeparatorHandler : ContentHandler {
+class SeparatorHandler : ContentHandler<Sheet> {
     override fun handleContent(
-        sheet: XSSFSheet,
+        sheet: Sheet,
         content: Content,
-        context: RenderContext
+        context: RenderContext,
     ): Int {
         val rowStart = context.currentRow()
 

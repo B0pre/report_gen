@@ -12,10 +12,10 @@ import java.io.FileOutputStream
 
 class PoiDocumentRenderer(
     val sheets: List<Sheet>,
-    val handlers: List<ContentHandler>,
+    val handlers: List<ContentHandler<org.apache.poi.ss.usermodel.Sheet>>,
     val settings: DocumentSettings,
     private val styles: Map<String, CellSettings> = emptyMap(),
-    private val properties: RenderProperties = RenderProperties.empty()
+    private val properties: RenderProperties = RenderProperties.empty(),
 ) : Generator() {
     override fun renderToFile(file: File) {
         val workBook = renderWorkBook()

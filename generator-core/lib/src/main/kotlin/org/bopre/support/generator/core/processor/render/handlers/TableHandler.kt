@@ -1,7 +1,7 @@
 package org.bopre.support.generator.core.processor.render.handlers
 
 import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.ss.usermodel.Sheet
 import org.bopre.support.generator.core.processor.content.Content
 import org.bopre.support.generator.core.processor.content.TableContent
 import org.bopre.support.generator.core.processor.data.LineSource
@@ -10,16 +10,16 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.math.max
 
-class TableHandler : ContentHandler {
+class TableHandler : ContentHandler<Sheet> {
 
     companion object {
         private const val DEFAULT_DATE_FORMAT: String = "d/m/yyyy"
     }
 
     override fun handleContent(
-        sheet: XSSFSheet,
+        sheet: Sheet,
         content: Content,
-        context: RenderContext
+        context: RenderContext,
     ): Int {
         if (content !is TableContent) return context.currentRow()
         val rowStart = context.currentRow()
